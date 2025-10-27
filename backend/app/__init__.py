@@ -1,0 +1,1 @@
+# Package marker for backend.app; enables relative imports when running `uvicorn app.main:app` from backend/

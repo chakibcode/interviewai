@@ -1,0 +1,9 @@
+Collecting pdfminer.six
+  Using cached pdfminer_six-20250506-py3-none-any.whl.metadata (4.2 kB)
+Requirement already satisfied: charset-normalizer>=2.0.0 in ./.venv/lib/python3.12/site-packages (from pdfminer.six) (3.4.4)
+Requirement already satisfied: cryptography>=36.0.0 in ./.venv/lib/python3.12/site-packages (from pdfminer.six) (46.0.3)
+Requirement already satisfied: cffi>=2.0.0 in ./.venv/lib/python3.12/site-packages (from cryptography>=36.0.0->pdfminer.six) (2.0.0)
+Requirement already satisfied: pycparser in ./.venv/lib/python3.12/site-packages (from cffi>=2.0.0->cryptography>=36.0.0->pdfminer.six) (2.23)
+Using cached pdfminer_six-20250506-py3-none-any.whl (5.6 MB)
+Installing collected packages: pdfminer.six
+Successfully installed pdfminer.six-20250506

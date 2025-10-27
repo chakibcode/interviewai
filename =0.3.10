@@ -1,0 +1,20 @@
+Collecting pdfplumber
+  Downloading pdfplumber-0.11.7-py3-none-any.whl.metadata (42 kB)
+Collecting pytesseract
+  Downloading pytesseract-0.3.13-py3-none-any.whl.metadata (11 kB)
+Requirement already satisfied: pdfminer.six==20250506 in ./.venv/lib/python3.12/site-packages (from pdfplumber) (20250506)
+Requirement already satisfied: Pillow>=9.1 in ./.venv/lib/python3.12/site-packages (from pdfplumber) (12.0.0)
+Collecting pypdfium2>=4.18.0 (from pdfplumber)
+  Downloading pypdfium2-5.0.0-py3-none-macosx_11_0_x86_64.whl.metadata (67 kB)
+Requirement already satisfied: charset-normalizer>=2.0.0 in ./.venv/lib/python3.12/site-packages (from pdfminer.six==20250506->pdfplumber) (3.4.4)
+Requirement already satisfied: cryptography>=36.0.0 in ./.venv/lib/python3.12/site-packages (from pdfminer.six==20250506->pdfplumber) (46.0.3)
+Requirement already satisfied: packaging>=21.3 in ./.venv/lib/python3.12/site-packages (from pytesseract) (25.0)
+Requirement already satisfied: cffi>=2.0.0 in ./.venv/lib/python3.12/site-packages (from cryptography>=36.0.0->pdfminer.six==20250506->pdfplumber) (2.0.0)
+Requirement already satisfied: pycparser in ./.venv/lib/python3.12/site-packages (from cffi>=2.0.0->cryptography>=36.0.0->pdfminer.six==20250506->pdfplumber) (2.23)
+Downloading pdfplumber-0.11.7-py3-none-any.whl (60 kB)
+Downloading pytesseract-0.3.13-py3-none-any.whl (14 kB)
+Downloading pypdfium2-5.0.0-py3-none-macosx_11_0_x86_64.whl (2.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.9/2.9 MB 13.3 MB/s  0:00:00
+Installing collected packages: pytesseract, pypdfium2, pdfplumber
+
+Successfully installed pdfplumber-0.11.7 pypdfium2-5.0.0 pytesseract-0.3.13

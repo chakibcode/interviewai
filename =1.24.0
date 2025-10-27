@@ -1,0 +1,6 @@
+Collecting PyMuPDF
+  Downloading pymupdf-1.26.5-cp39-abi3-macosx_10_9_x86_64.whl.metadata (3.4 kB)
+Downloading pymupdf-1.26.5-cp39-abi3-macosx_10_9_x86_64.whl (23.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.1/23.1 MB 114.8 kB/s  0:03:15
+Installing collected packages: PyMuPDF
+Successfully installed PyMuPDF-1.26.5

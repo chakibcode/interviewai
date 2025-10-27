@@ -1,0 +1,99 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { authService, type AuthUser } from "@/services/authService";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "./ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { LayoutDashboard, User, LogOut } from "lucide-react";
+
+export default function Navbar() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    authService.getUser().then(setUser);
+  }, []);
+
+  const handleLogout = async () => {
+    await authService.signOut();
+    navigate("/login");
+  };
+
+  const goToFeatures = () => {
+    navigate("/");
+    setTimeout(() => {
+      const el = document.getElementById("features");
+      el?.scrollIntoView({ behavior: "smooth" });
+    }, 0);
+  };
+
+  return (
+    <nav className="w-full border-b bg-white/20 backdrop-blur supports-[backdrop-filter]:bg-white/10">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Left: Brand */}
+        <div className="flex items-center space-x-2">
+          <Link to="/" className="text-xl font-semibold">
+            InterviewAI
+          </Link>
+        </div>
+
+        {/* Center: Links for Pricing, Features, Login */}
+        <div className="hidden md:flex items-center gap-6">
+          <Link to="/pricing" className="text-sm font-medium hover:text-accent transition-colors">
+            Pricing
+          </Link>
+          <button onClick={goToFeatures} className="text-sm font-medium hover:text-accent transition-colors">
+            Features
+          </button>
+          {!user && (
+            <Link to="/login" className="text-sm font-medium hover:text-accent transition-colors">
+              Login
+            </Link>
+          )}
+        </div>
+
+        {/* Right: Circle dropdown menu (Dashboard, Profile, Logout) */}
+        <div className="flex items-center space-x-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src={user?.avatarUrl || ""} alt="User" />
+                  <AvatarFallback className="text-sm font-medium">
+                    {(user?.email || "U").charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 p-1.5">
+              <DropdownMenuLabel className="px-2 py-1 text-xs text-muted-foreground">
+                {user?.email || "Menu"}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate("/dashboard")} className="gap-2">
+                <LayoutDashboard className="h-4 w-4" />
+                <span>Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/profile")} className="gap-2">
+                <User className="h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="gap-2 text-destructive focus:text-destructive">
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </nav>
+  );
+}
