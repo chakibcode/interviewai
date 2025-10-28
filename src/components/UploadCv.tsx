@@ -5,18 +5,22 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseClient";
 import { authService, type AuthUser } from "@/services/authService";
+import { cvService, type Cv } from "@/services/cvService";
+import PdfThumbnail from "./PdfThumbnail";
 
 interface UploadCvProps {
   onUploaded?: (url: string) => void;
-  previewUrl?: string;
   onExtracted?: (text: string | null) => void;
   onAnalyzed?: (data: any, cvId: string) => void;
   onUploadChange?: (uploading: boolean) => void;
+  previewUrl?: string | null;
 }
 
-export default function UploadCv({ onUploaded, previewUrl, onExtracted, onAnalyzed, onUploadChange }: UploadCvProps) {
+export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUploadChange, previewUrl }: UploadCvProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [cvs, setCvs] = useState<Cv[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -25,10 +29,20 @@ export default function UploadCv({ onUploaded, previewUrl, onExtracted, onAnalyz
     (async () => {
       const u = await authService.getUser();
       setUser(u);
+      if (u) {
+        const userCvs = await cvService.getCvs(u.id);
+        setCvs(userCvs);
+      }
     })();
   }, []);
 
   const handleCvUpload = async (file: File) => {
+    // Immediately create a local preview URL for quick thumbnail display
+    try {
+      const objectUrl = URL.createObjectURL(file);
+      setLocalPreviewUrl(objectUrl);
+    } catch {}
+
     if (!user) {
       toast({ title: "Login required", description: "Please login to upload your CV." });
       navigate("/login");
@@ -64,7 +78,7 @@ export default function UploadCv({ onUploaded, previewUrl, onExtracted, onAnalyz
       const uploadJson: any = await uploadResp.json();
       const cvId = uploadJson?.cv_id ?? user.id;
       const pdfPath = uploadJson?.pdf_storage_path;
-      const pdfUrl = uploadJson?.original_pdf_url;
+      const pdfUrl = `${supabase.storage.from("cv2interviewBucket").getPublicUrl(pdfPath).data.publicUrl}`;
 
       // 2) Request extraction via new endpoint
       const extractResp = await fetch("http://localhost:8001/cv/extract", {
@@ -127,14 +141,20 @@ export default function UploadCv({ onUploaded, previewUrl, onExtracted, onAnalyz
         .upload(imgPath, imageBlob, { upsert: true, contentType: "image/jpeg" });
       if (uploadRes.error) throw new Error(uploadRes.error.message);
   
-      // 5) Get a signed URL for display
+      // 5) Get a signed URL for the PDF for display
       const { data, error } = await supabase.storage
         .from("cv2interviewBucket")
-        .createSignedUrl(imgPath, 600);
-      if (error || !data?.signedUrl) throw new Error(error?.message || "Could not create image URL");
+        .createSignedUrl(pdfPath, 600);
+      if (error || !data?.signedUrl) throw new Error(error?.message || "Could not create PDF URL");
   
       onUploaded?.(data.signedUrl);
       toast({ title: "CV processed", description: "Text extracted and thumbnail created." });
+
+      // Refresh CV list
+      if (user) {
+        const userCvs = await cvService.getCvs(user.id);
+        setCvs(userCvs);
+      }
     } catch (e: any) {
       toast({ title: "Upload failed", description: e.message ?? "Could not process CV.", variant: "destructive" });
     } finally {
@@ -142,6 +162,22 @@ export default function UploadCv({ onUploaded, previewUrl, onExtracted, onAnalyz
       onUploadChange?.(false);
     }
   };
+
+  // Revoke previously created local preview URL when it changes or on unmount
+  useEffect(() => {
+    return () => {
+      if (localPreviewUrl) {
+        try { URL.revokeObjectURL(localPreviewUrl); } catch {}
+      }
+    };
+  }, [localPreviewUrl]);
+
+  const pdfToRender = useMemo(() => {
+    if (localPreviewUrl) return localPreviewUrl;
+    if (previewUrl) return previewUrl;
+    if (cvs.length > 0) return cvs[0].preview_url;
+    return undefined;
+  }, [localPreviewUrl, cvs, previewUrl]);
 
   return (
     <section className="rounded-xl border bg-card p-6">
@@ -167,21 +203,20 @@ export default function UploadCv({ onUploaded, previewUrl, onExtracted, onAnalyz
             <Button
               disabled={uploading}
               onClick={() => fileInputRef.current?.click()}
+              className="bg-green-500 hover:bg-green-600 text-black"
             >
               {uploading ? "Uploading..." : "Upload CV"}
             </Button>
           </div>
           <div className="text-xs text-muted-foreground">Accepted format: PDF, max 10MB.</div>
         </div>
-        {previewUrl && (
-          <div className="justify-self-end">
-            <img
-              src={previewUrl}
-              alt="CV thumbnail"
-              className="w-auto h-[200px] object-cover rounded-md border"
-            />
-          </div>
-        )}
+        <div className="justify-self-end max-h-[50px] overflow-y-auto space-y-2">
+          {pdfToRender && (
+            <div className="border rounded-md p-2">
+              <PdfThumbnail url={pdfToRender} height={50} />
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

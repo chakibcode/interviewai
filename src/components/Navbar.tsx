@@ -11,11 +11,13 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { LayoutDashboard, User, LogOut } from "lucide-react";
+import { LayoutDashboard, User, LogOut, Moon, Sun } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 
-export default function Navbar() {
+function Navbar() {
   const navigate = useNavigate();
   const [user, setUser] = useState<AuthUser | null>(null);
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     authService.getUser().then(setUser);
@@ -35,7 +37,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full border-b bg-white/20 backdrop-blur supports-[backdrop-filter]:bg-white/10">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Left: Brand */}
         <div className="flex items-center space-x-2">
@@ -61,6 +63,26 @@ export default function Navbar() {
 
         {/* Right: Circle dropdown menu (Dashboard, Profile, Logout) */}
         <div className="flex items-center space-x-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <span className="sr-only">Toggle theme</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setTheme("light")}>
+                Light
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
+                Dark
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("system")}>
+                System
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -94,6 +116,8 @@ export default function Navbar() {
           </DropdownMenu>
         </div>
       </div>
-    </nav>
+    </header>
   );
-}
+};
+
+export default Navbar;

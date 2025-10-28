@@ -1,65 +1,90 @@
-import React, { useEffect, useRef } from "react";
-import { GlobalWorkerOptions, getDocument } from "pdfjs-dist";
-// Vite-friendly way to load the worker
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js?url";
+import React, { useRef, useEffect, useState } from 'react';
+import * as pdfjs from 'pdfjs-dist';
 
-GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// Set up the worker source for pdf.js
+pdfjs.GlobalWorkerOptions.workerSrc = `/assets/pdf.worker.min.mjs`;
 
-type PdfThumbnailProps = {
+interface PdfThumbnailProps {
   url: string;
-  height?: number; // desired thumbnail height in px
-  className?: string;
-};
+  height?: number;
+}
 
-export default function PdfThumbnail({ url, height = 100, className = "" }: PdfThumbnailProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+const PdfThumbnail: React.FC<PdfThumbnailProps> = ({ url, height = 200 }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const renderPdf = async () => {
+      console.log('[PdfThumbnail] Starting PDF render for URL:', url);
+      if (!url) {
+        console.error('[PdfThumbnail] No URL provided.');
+        setError('No URL provided.');
+        setIsLoading(false);
+        return;
+      }
 
-    const render = async () => {
+      setIsLoading(true);
+      setError(null);
+
       try {
-        const loadingTask = getDocument({ url });
+        console.log('[PdfThumbnail] Loading PDF document...');
+        const loadingTask = pdfjs.getDocument(url);
         const pdf = await loadingTask.promise;
-        const page = await pdf.getPage(1);
+        console.log('[PdfThumbnail] PDF document loaded:', pdf);
 
-        // Get viewport at scale = 1 to compute scale for target height
-        const viewportAt1 = page.getViewport({ scale: 1 });
-        const scale = height / viewportAt1.height;
-        const viewport = page.getViewport({ scale });
+        console.log('[PdfThumbnail] Getting page 1...');
+        const page = await pdf.getPage(1);
+        console.log('[PdfThumbnail] Page 1 loaded:', page);
 
         const canvas = canvasRef.current;
-        if (!canvas) return;
-        const context = canvas.getContext("2d");
-        if (!context) return;
-
-        canvas.height = Math.floor(viewport.height);
-        canvas.width = Math.floor(viewport.width);
-
-        const renderTask = page.render({ canvasContext: context, viewport, canvas });
-        await renderTask.promise;
-
-        if (!cancelled) {
-          // No-op; canvas now contains the first page thumbnail
+        if (!canvas) {
+          console.error('[PdfThumbnail] Canvas element not found.');
+          setError('Canvas element not found.');
+          setIsLoading(false);
+          return;
         }
-      } catch (err) {
-        // Silently fail; caller can choose to show fallback UI
-        // console.error("Failed to render PDF thumbnail", err);
+        const context = canvas.getContext('2d');
+        if (!context) {
+          console.error('[PdfThumbnail] Canvas 2D context not available.');
+          setError('Canvas 2D context not available.');
+          setIsLoading(false);
+          return;
+        }
+
+        const viewport = page.getViewport({ scale: 1 });
+        const scale = height / viewport.height;
+        const scaledViewport = page.getViewport({ scale });
+
+        canvas.height = scaledViewport.height;
+        canvas.width = scaledViewport.width;
+
+        const renderContext = {
+          canvas: canvas,
+          canvasContext: context,
+          viewport: scaledViewport,
+        };
+
+        await page.render(renderContext).promise;
+        console.log('[PdfThumbnail] Page rendered successfully.');
+        setIsLoading(false);
+      } catch (err: any) {
+        console.error('[PdfThumbnail] Error rendering PDF:', err);
+        setError(err.message || 'Failed to render PDF.');
+        setIsLoading(false);
       }
     };
 
-    render();
-
-    return () => {
-      cancelled = true;
-    };
+    renderPdf();
   }, [url, height]);
 
   return (
-    <div className={`overflow-hidden`} style={{ height }}>
-      <canvas ref={canvasRef} className={`block ${className}`} style={{ height, width: "auto" }} />
+    <div>
+      {isLoading && <div>Loading PDF...</div>}
+      {error && <div style={{ color: 'red' }}>Error: {error}</div>}
+      <canvas ref={canvasRef} style={{ display: isLoading || error ? 'none' : 'block' }} role="img" aria-label={`Thumbnail preview of ${url}`} />
     </div>
   );
-}
+};
+
+export default PdfThumbnail;

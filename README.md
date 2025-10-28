@@ -1,74 +1,73 @@
-# Welcome to your Lovable project
+# InterviewAI
 
-## Project info
+InterviewAI is a web application designed to help users practice for job interviews. It provides a platform where users can upload their CV, practice interview questions, and receive feedback. The application is built with a modern tech stack, featuring a React frontend and a Python backend.
 
-**URL**: https://lovable.dev/projects/07ff5b46-4bcc-4c25-b80f-5ac69b33d155
+## Features
 
-## How can I edit this code?
+- **User Authentication:** Secure login and signup functionality.
+- **Dashboard:** A personalized dashboard for each user.
+- **CV Upload:** Users can upload their CV for analysis and personalized feedback.
+- **Interview Practice:** An interactive interface to practice interview questions.
+- **Theme Switcher:** A theme switcher for light and dark modes.
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+### Frontend
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/07ff5b46-4bcc-4c25-b80f-5ac69b33d155) and start prompting.
+- **React:** A JavaScript library for building user interfaces.
+- **Vite:** A fast build tool for modern web development.
+- **TypeScript:** A typed superset of JavaScript.
+- **Tailwind CSS:** A utility-first CSS framework.
+- **Shadcn/ui:** A collection of reusable UI components.
+- **Supabase:** Used for authentication and database management.
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
 
-**Use your preferred IDE**
+- **Python:** A versatile programming language.
+- **FastAPI:** A modern, fast (high-performance) web framework for building APIs with Python.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+To get started with the project, follow these steps:
 
-Follow these steps:
+1. **Clone the repository:**
+   ```sh
+   git clone <YOUR_GIT_URL>
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. **Navigate to the project directory:**
+   ```sh
+   cd interviewai
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. **Install the frontend dependencies:**
+   ```sh
+   npm install
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+4. **Start the frontend development server:**
+   ```sh
+   npm run dev
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+5. **Navigate to the backend directory:**
+    ```sh
+    cd backend
+    ```
 
-**Edit a file directly in GitHub**
+6. **Install the backend dependencies:**
+    ```sh
+    pip install -r requirements.txt
+    ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+7. **Start the backend server:**
+    ```sh
+    uvicorn app.main:app --reload
+    ```
 
-**Use GitHub Codespaces**
+## Project Structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The project is organized into two main directories:
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/07ff5b46-4bcc-4c25-b80f-5ac69b33d155) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
-# interviewai
+- **`src/`:** Contains the frontend code, including components, pages, services, and styles.
+- **`backend/`:** Contains the backend code, including the FastAPI application and related modules.

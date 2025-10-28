@@ -66,7 +66,7 @@ def get_s3_client_from_supabase_env():
     )
 # OpenAI configuration
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "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")
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt‑4o‑mini")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-3.5-turbo")
 
 # Mistral configuration (use standard env var names)
 MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY", "")
