@@ -1,0 +1,7 @@
+HTTP/1.1 500 Internal Server Error
+date: Wed, 29 Oct 2025 12:54:50 GMT
+server: uvicorn
+content-length: 493
+content-type: application/json
+
+{"detail":"OpenAI test failed: OpenAI API error: 401 {\n    \"error\": {\n        \"message\": \"Incorrect API key provided: sk-proj-********************************************************************************************************************************************************kTAA. You can find your API key at https://platform.openai.com/account/api-keys.\",\n        \"type\": \"invalid_request_error\",\n        \"param\": null,\n        \"code\": \"invalid_api_key\"\n    }\n}\n"}

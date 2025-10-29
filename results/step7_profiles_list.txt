@@ -1,0 +1,21 @@
+HTTP/2 200 
+date: Wed, 29 Oct 2025 12:40:57 GMT
+content-type: application/json; charset=utf-8
+server: cloudflare
+content-range: 0-0/*
+cf-ray: 9962be8eb93cd746-MRS
+cf-cache-status: DYNAMIC
+content-location: /profiles?limit=5&select=%2A
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding
+content-profile: public
+sb-gateway-version: 1
+sb-project-ref: rwgurwnglnxihjswjute
+sb-request-id: 019a2ffc-5538-74d4-b20e-24b2ce8b0c0f
+x-content-type-options: nosniff
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 88
+set-cookie: __cf_bm=tgpqAVjXPinLd3Jqbk7OfoZaAGUu0KpNBLEgG27gphs-1761741657-1.0.1.1-ejpCDSzIEQgn1nwtmdbMAXFu73lfI5TvQeBkje8yHtikLLXCovEBWrgx0vJb67Jv5QlPvFVNsyI3l1p0pY3zlTd4KGfRaflCo2Akfh8RrnI; path=/; expires=Wed, 29-Oct-25 13:10:57 GMT; domain=.supabase.co; HttpOnly; Secure; SameSite=None
+alt-svc: h3=":443"; ma=86400
+
+[{"id":"2c778dd8-4af4-48b7-8d53-ed65e75b211a","user_id":"7af1e20f-071b-45f5-8669-4145eaa50e9b","email":"guostonline@gmail.com","full_name":"chakib elfil","avatar_url":null,"plan":"free","plan_status":"active","billing_email":null,"stripe_customer_id":null,"stripe_subscription_id":null,"trial_ends_at":null,"current_period_end":null,"onboarding_completed":false,"last_login_at":"2025-10-29T11:29:11.15+00:00","created_at":"2025-10-24T20:56:34.48979+00:00","updated_at":"2025-10-29T11:29:11.637072+00:00"}]

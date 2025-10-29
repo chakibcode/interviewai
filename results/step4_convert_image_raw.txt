@@ -1,0 +1,7 @@
+HTTP/1.1 422 Unprocessable Entity
+date: Wed, 29 Oct 2025 12:31:48 GMT
+server: uvicorn
+content-length: 89
+content-type: application/json
+
+{"detail":[{"type":"missing","loc":["body","file"],"msg":"Field required","input":null}]}

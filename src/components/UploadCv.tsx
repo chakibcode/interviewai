@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseClient";
 import { authService, type AuthUser } from "@/services/authService";
 import { cvService, type Cv } from "@/services/cvService";
+import { BACKEND_URL } from "@/services/api";
 import PdfThumbnail from "./PdfThumbnail";
 
 interface UploadCvProps {
@@ -21,6 +22,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
   const [cvs, setCvs] = useState<Cv[]>([]);
   const [uploading, setUploading] = useState(false);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | undefined>(undefined);
+  const [extractedPreview, setExtractedPreview] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,13 +63,14 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
     onUploadChange?.(true);
     // Clear any previous extracted text
     onExtracted?.(null);
+    setExtractedPreview(null);
     
     try {
       // 1) Upload original PDF to backend (local storage)
       const uploadForm = new FormData();
       uploadForm.append("user_id", user.id);
       uploadForm.append("file", file, file.name);
-      const uploadResp = await fetch("http://localhost:8001/cv/upload", {
+      const uploadResp = await fetch(`${BACKEND_URL}/cv/upload`, {
         method: "POST",
         body: uploadForm,
       });
@@ -78,38 +81,32 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
       const uploadJson: any = await uploadResp.json();
       const cvId = uploadJson?.cv_id ?? user.id;
       const pdfPath = uploadJson?.pdf_storage_path;
-      const pdfUrl = `${supabase.storage.from("cv2interviewBucket").getPublicUrl(pdfPath).data.publicUrl}`;
+      const pdfUrl: string = uploadJson?.original_pdf_url || "";
 
-      // 2) Request extraction via new endpoint
-      const extractResp = await fetch("http://localhost:8001/cv/extract", {
+      // 2) Request extraction via new endpoint (multipart/form-data with the file)
+      const extractForm = new FormData();
+      extractForm.append("file", file, file.name);
+      setExtractedPreview("Extracting text…");
+      const extractResp = await fetch(`${BACKEND_URL}/cv/extract`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: user.id, cv_id: cvId, pdf_url: pdfUrl }),
+        headers: { Accept: "text/plain" },
+        body: extractForm,
       });
       if (!extractResp.ok) {
         const text = await extractResp.text();
+        setExtractedPreview(text || `Extraction failed (HTTP ${extractResp.status})`);
         throw new Error(text || `HTTP ${extractResp.status}`);
       }
-      const extractJson = await extractResp.json();
-      // Prefer plain text extracted from backend when available
-      const plainText = (extractJson?.text_extracted ?? "").trim();
-      let extractedText: string;
-      if (plainText && plainText.length > 0) {
-        extractedText = plainText;
-      } else {
-        const payload = extractJson?.extracted_data && Object.keys(extractJson.extracted_data).length
-          ? extractJson.extracted_data
-          : (extractJson?.extracted_raw ?? extractJson);
-        extractedText = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
-      }
+      const extractedText = ((await extractResp.text()) || "").trim();
       onExtracted?.(extractedText);
+      setExtractedPreview(extractedText);
 
       // 2b) Analyze structured fields by sending plain text to /openai/parse_cv
       try {
-        const parseResp = await fetch("http://localhost:8001/openai/parse_cv", {
+        const parseResp = await fetch(`${BACKEND_URL}/openai/parse_cv`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: extractedText || plainText || "" }),
+          body: JSON.stringify({ text: extractedText || "" }),
         });
         if (parseResp.ok) {
           const parsedJson = await parseResp.json();
@@ -126,7 +123,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
       // 3) Convert the uploaded PDF to JPEG via backend
       const convertForm = new FormData();
       convertForm.append("file", file, file.name);
-      const convertUrl = "http://localhost:8001/cv/convert-to-image?format=JPEG&width=300&height=300&quality=85";
+      const convertUrl = `${BACKEND_URL}/cv/convert-to-image?format=JPEG&width=300&height=300&quality=85`;
       const resp = await fetch(convertUrl, { method: "POST", body: convertForm });
       if (!resp.ok) {
         const text = await resp.text();
@@ -141,13 +138,10 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
         .upload(imgPath, imageBlob, { upsert: true, contentType: "image/jpeg" });
       if (uploadRes.error) throw new Error(uploadRes.error.message);
   
-      // 5) Get a signed URL for the PDF for display
-      const { data, error } = await supabase.storage
-        .from("cv2interviewBucket")
-        .createSignedUrl(pdfPath, 600);
-      if (error || !data?.signedUrl) throw new Error(error?.message || "Could not create PDF URL");
-  
-      onUploaded?.(data.signedUrl);
+      // 5) Use backend-served public URL for the uploaded PDF for preview
+      if (pdfUrl) {
+        onUploaded?.(pdfUrl);
+      }
       toast({ title: "CV processed", description: "Text extracted and thumbnail created." });
 
       // Refresh CV list
@@ -157,6 +151,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
       }
     } catch (e: any) {
       toast({ title: "Upload failed", description: e.message ?? "Could not process CV.", variant: "destructive" });
+      if (!extractedPreview) setExtractedPreview("Upload or extraction failed.");
     } finally {
       setUploading(false);
       onUploadChange?.(false);
@@ -209,11 +204,19 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
             </Button>
           </div>
           <div className="text-xs text-muted-foreground">Accepted format: PDF, max 10MB.</div>
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Extracted Text</h3>
+            <div className="rounded-md border bg-muted/30 p-3 max-h-[220px] overflow-auto">
+              <pre className="text-xs whitespace-pre-wrap break-words">
+                {extractedPreview || "No text extracted yet."}
+              </pre>
+            </div>
+          </div>
         </div>
-        <div className="justify-self-end max-h-[50px] overflow-y-auto space-y-2">
+        <div className="justify-self-end max-h-[200px] overflow-y-auto space-y-2">
           {pdfToRender && (
-            <div className="border rounded-md p-2">
-              <PdfThumbnail url={pdfToRender} height={50} />
+            <div className="rounded-md p-2">
+              <PdfThumbnail url={pdfToRender} height={200} />
             </div>
           )}
         </div>

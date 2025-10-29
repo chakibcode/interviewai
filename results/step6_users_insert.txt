@@ -1,0 +1,19 @@
+HTTP/2 404 
+date: Wed, 29 Oct 2025 12:39:56 GMT
+content-type: application/json; charset=utf-8
+server: cloudflare
+cf-ray: 9962bd0f8a42e1dd-MRS
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding
+proxy-status: PostgREST; error=PGRST205
+sb-gateway-version: 1
+sb-project-ref: rwgurwnglnxihjswjute
+sb-request-id: 019a2ffb-65c6-7852-b9af-3143298f360e
+x-content-type-options: nosniff
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 37
+set-cookie: __cf_bm=W8gVuZkviUNjpKt6oTCF7XMJFha7HQB9nNPtisRU8EI-1761741596-1.0.1.1-X9_jc4Vb.PtOANFmJCSrG_yXKuq3YC31qrkwYs8MAfOq1oo5NguoMDjzWA329UHn4aE7ZMuBIqLT6UnBfCVJ0B.6JQ4PvujzF8K3oKs3.HQ; path=/; expires=Wed, 29-Oct-25 13:09:56 GMT; domain=.supabase.co; HttpOnly; Secure; SameSite=None
+alt-svc: h3=":443"; ma=86400
+
+{"code":"PGRST205","details":null,"hint":null,"message":"Could not find the table 'public.users' in the schema cache"}

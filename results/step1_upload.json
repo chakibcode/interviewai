@@ -1,0 +1,6 @@
+{
+  "user_id": "test-user-123",
+  "cv_id": "c0e9a352-3db1-4bd7-9eb7-4609b7e7b105",
+  "pdf_storage_path": "/Users/chakib/Coding/interviewai/backend/uploads/test-user-123/cv/cv.pdf",
+  "original_pdf_url": "http://localhost:8000/uploads/test-user-123/cv/cv.pdf"
+}

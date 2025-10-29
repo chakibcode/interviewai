@@ -1,0 +1,19 @@
+HTTP/2 400 
+date: Wed, 29 Oct 2025 12:36:32 GMT
+content-type: application/json; charset=utf-8
+server: cloudflare
+cf-ray: 9962b8169bc75dd1-MRS
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding
+proxy-status: PostgREST; error=22P02
+sb-gateway-version: 1
+sb-project-ref: rwgurwnglnxihjswjute
+sb-request-id: 019a2ff8-4a2c-70f0-9e22-f80d16933e24
+x-content-type-options: nosniff
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 97
+set-cookie: __cf_bm=D69NqMvjnnWoLNcJlgQy2cJK2YIRX27zykaSwpDsmiE-1761741392-1.0.1.1-dyEXOvdiGWCEzqXWtBOfnS0vb8LYfrPdQzPtWMIMOhIhJ.KzU1iAXp_dFgL0AH8C5yW3zzexeLhI1yUxZV_uPKJbowHX81Krrxyop46._5g; path=/; expires=Wed, 29-Oct-25 13:06:32 GMT; domain=.supabase.co; HttpOnly; Secure; SameSite=None
+alt-svc: h3=":443"; ma=86400
+
+{"code":"22P02","details":null,"hint":null,"message":"invalid input syntax for type uuid: \"test-user-123\""}

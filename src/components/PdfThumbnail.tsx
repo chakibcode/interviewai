@@ -13,6 +13,7 @@ const PdfThumbnail: React.FC<PdfThumbnailProps> = ({ url, height = 200 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [thumbSize, setThumbSize] = useState<{ width: number; height: number } | null>(null);
 
   useEffect(() => {
     const renderPdf = async () => {
@@ -55,18 +56,47 @@ const PdfThumbnail: React.FC<PdfThumbnailProps> = ({ url, height = 200 }) => {
         const viewport = page.getViewport({ scale: 1 });
         const scale = height / viewport.height;
         const scaledViewport = page.getViewport({ scale });
+        setThumbSize({ width: scaledViewport.width, height: scaledViewport.height });
 
-        canvas.height = scaledViewport.height;
-        canvas.width = scaledViewport.width;
+        // Render to an offscreen canvas first
+        const offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.width = scaledViewport.width;
+        offscreenCanvas.height = scaledViewport.height;
+        const offscreenContext = offscreenCanvas.getContext('2d');
+        if (!offscreenContext) {
+          console.error('[PdfThumbnail] Offscreen canvas 2D context not available.');
+          setError('Offscreen canvas 2D context not available.');
+          setIsLoading(false);
+          return;
+        }
 
         const renderContext = {
-          canvas: canvas,
-          canvasContext: context,
+          canvasContext: offscreenContext,
           viewport: scaledViewport,
-        };
+        } as any;
 
         await page.render(renderContext).promise;
-        console.log('[PdfThumbnail] Page rendered successfully.');
+        console.log('[PdfThumbnail] Page rendered to offscreen canvas successfully.');
+
+        // Rotate by 15 degrees clockwise when drawing to the visible canvas
+        const angleDeg = 15;
+        const angleRad = (angleDeg * Math.PI) / 180;
+        const w = offscreenCanvas.width;
+        const h = offscreenCanvas.height;
+        const rotatedW = Math.abs(w * Math.cos(angleRad)) + Math.abs(h * Math.sin(angleRad));
+        const rotatedH = Math.abs(h * Math.cos(angleRad)) + Math.abs(w * Math.sin(angleRad));
+
+        canvas.width = Math.ceil(rotatedW);
+        canvas.height = Math.ceil(rotatedH);
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.save();
+        context.translate(canvas.width / 2, canvas.height / 2);
+        context.rotate(angleRad);
+        // Use 5-argument overload to satisfy TypeScript: image, dx, dy, dWidth, dHeight
+        context.drawImage(offscreenCanvas as CanvasImageSource, -w / 2, -h / 2, w, h);
+        context.restore();
+        console.log('[PdfThumbnail] Rotated thumbnail drawn successfully.');
         setIsLoading(false);
       } catch (err: any) {
         console.error('[PdfThumbnail] Error rendering PDF:', err);
@@ -79,7 +109,13 @@ const PdfThumbnail: React.FC<PdfThumbnailProps> = ({ url, height = 200 }) => {
   }, [url, height]);
 
   return (
-    <div>
+    <div
+      style={{
+        width: thumbSize?.width ?? undefined,
+        height: thumbSize?.height ?? undefined,
+        overflow: 'hidden',
+      }}
+    >
       {isLoading && <div>Loading PDF...</div>}
       {error && <div style={{ color: 'red' }}>Error: {error}</div>}
       <canvas ref={canvasRef} style={{ display: isLoading || error ? 'none' : 'block' }} role="img" aria-label={`Thumbnail preview of ${url}`} />

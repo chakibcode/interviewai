@@ -1,0 +1,56 @@
+{
+  "full_name": "Jane Smith",
+  "email": "jane.smith@email.com",
+  "phone": "+1 (555) 123-4567",
+  "location": "New York, NY",
+  "links": [
+    "linkedin.com/in/janesmith",
+    "github.com/janesmith"
+  ],
+  "skills": [
+    "Python",
+    "JavaScript",
+    "React",
+    "Node.js",
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "Machine Learning"
+  ],
+  "education": [
+    {
+      "institution": "Stanford University",
+      "degree": "Master of Science in Computer Science",
+      "start_date": "2020",
+      "end_date": "2022"
+    },
+    {
+      "institution": "MIT",
+      "degree": "Bachelor of Science in Software Engineering",
+      "start_date": "2016",
+      "end_date": "2020"
+    }
+  ],
+  "experience": [
+    {
+      "company": "Google",
+      "role": "Senior Software Engineer",
+      "start_date": "2022",
+      "end_date": "Present",
+      "summary": [
+        "Led development of microservices architecture",
+        "Improved system performance by 40%"
+      ]
+    },
+    {
+      "company": "Microsoft",
+      "role": "Software Engineer",
+      "start_date": "2020",
+      "end_date": "2022",
+      "summary": [
+        "Developed web applications using React and Node.js",
+        "Collaborated with cross-functional teams"
+      ]
+    }
+  ]
+}

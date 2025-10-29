@@ -1,0 +1,19 @@
+HTTP/2 400 
+date: Wed, 29 Oct 2025 12:44:33 GMT
+content-type: application/json; charset=utf-8
+server: cloudflare
+cf-ray: 9962c3d4ee86c6b7-MRS
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding
+proxy-status: PostgREST; error=PGRST204
+sb-gateway-version: 1
+sb-project-ref: rwgurwnglnxihjswjute
+sb-request-id: 019a2fff-a11e-78fa-aa4b-9546aca13c5e
+x-content-type-options: nosniff
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 29
+set-cookie: __cf_bm=KFSIJsgFdW4U_ksz_Ex7NHflIqj_KuMfzEFZgVSSdbQ-1761741873-1.0.1.1-2DckPV0FKmDFDTmREG4PriFcQwBoe8CwCrQaLpUpODverMuXyTaXtQnelFcRqN2sYVwt54nAxzIb870qxc8f5zr09ZzaqoVorQ0qIk.2QUo; path=/; expires=Wed, 29-Oct-25 13:14:33 GMT; domain=.supabase.co; HttpOnly; Secure; SameSite=None
+alt-svc: h3=":443"; ma=86400
+
+{"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'cv_id' column of 'profiles' in the schema cache"}

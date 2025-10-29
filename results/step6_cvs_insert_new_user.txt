@@ -1,0 +1,19 @@
+HTTP/2 409 
+date: Wed, 29 Oct 2025 12:38:59 GMT
+content-type: application/json; charset=utf-8
+server: cloudflare
+cf-ray: 9962bba91b73e18d-MRS
+cf-cache-status: DYNAMIC
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+vary: Accept-Encoding
+proxy-status: PostgREST; error=23503
+sb-gateway-version: 1
+sb-project-ref: rwgurwnglnxihjswjute
+sb-request-id: 019a2ffa-85bc-79f6-9410-25ba527bae03
+x-content-type-options: nosniff
+x-envoy-attempt-count: 1
+x-envoy-upstream-service-time: 174
+set-cookie: __cf_bm=Eefyv_RNg6P7Zcvno99P7AsqWE.d3IUYaOUl8VYflVE-1761741539-1.0.1.1-JnnSt0oqe8lPK8Ll5SEwo5d6.3RPPomEgDR7HBkpG8RymkUSUzVbZ6MyTUh7vesA8.5Hm64JuOiVCHiABtiWDetHHvNbgfJm2a4sfHOylaI; path=/; expires=Wed, 29-Oct-25 13:08:59 GMT; domain=.supabase.co; HttpOnly; Secure; SameSite=None
+alt-svc: h3=":443"; ma=86400
+
+{"code":"23503","details":"Key (user_id)=(26b8f29d-4996-4603-81ea-f860dc735e38) is not present in table \"users\".","hint":null,"message":"insert or update on table \"cvs\" violates foreign key constraint \"cvs_user_id_fkey\""}

@@ -1,0 +1,91 @@
+HTTP/1.1 200 OK
+date: Wed, 29 Oct 2025 12:30:43 GMT
+server: uvicorn
+content-length: 1392
+content-type: text/plain; charset=utf-8
+
+Guergous Mohamed 
+
+Mohmedguergous6@gmail.com 
+
+0636257871 
+
+Dour iouliouil azrar Taroudant 
+
+Permis de conduire : B 
+
+ETUDE ET FORMATIONS 
+
+2022- 
+
+Etudiant a la faculté de science juridique Agadir Filière Droit arabe 
+
+Agadir, Maroc 
+
+2017 – 
+
+Agadir, Maroc 
+
+2016– 
+
+Agadir, Maroc 
+
+2014 – 
+
+Agadir, Maroc 
+
+Etudes universitaires : obtention la licence d’histoire et civilisation a faculté de 
+lettres et science humanes d’Agadir 
+
+Etudes universitaires : Diplôme d’Etudes Universitaires générales 
+
+Etudes secondaires obtention de baccalauréat en sciences humaines a lycée 
+Ohud Temsia 
+
+EXPERIENCES PROFESSIONNELLES 
+
+2025 
+
+Agadir, Maroc 
+
+2019-2022 
+
+Agadir, Maroc 
+
+2017 -2018 
+
+Agadir, Maroc 
+
+Merchandiser et Animateur des ventes 
+ ste : Les Eaux Minérales d’Oulmès S.A 
+ - Mise en place et animation des ventes sur les points de distribution
+ - Optimisation de la visibilité des produits en rayon
+ - Remplacement du merchandiser principal sur la zone attribuée
+
+Encadrement programme d’alphabétisation chez délègue des affaire islamique 
+
+formation d’éducation au centra académie ait Melloul 
+
+COMPETANCE TECHNIQUE 
+
+BUREAUTIQUE : 
+
+Word, Excel, Powerpoint 
+
+DIVERS 
+
+Centres d’intérêts 
+
+-
+-
+- 
+
+Sports : Football, Natation.
+La lecture La musique 
+ La musique 
+
+Langues 
+
+- Arabe et berbère : Maternelle
+- Français : Moyen
+- Anglais : Moyen

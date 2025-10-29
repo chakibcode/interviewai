@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Wed, 29 Oct 2025 12:53:53 GMT
+server: uvicorn
+content-length: 155
+content-type: application/json
+
+{"status":"ok","has_key":false,"result":{"full_name":null,"email":null,"phone":null,"location":null,"links":[],"skills":[],"education":[],"experience":[]}}

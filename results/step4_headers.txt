@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Wed, 29 Oct 2025 12:33:23 GMT
+server: uvicorn
+content-disposition: inline; filename=cv_page_1.jpeg
+content-length: 228874
+content-type: image/jpeg
+

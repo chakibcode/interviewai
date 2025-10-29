@@ -23,6 +23,18 @@ Endpoints:
 - `POST /cv/upload` — uploads CV (PDF) and extracts data
 - `POST /profile/photo/upload_s3` — uploads profile photo (jpeg/png).
 
+## Profiles ↔ CV linkage
+
+The backend best-effort updates `profiles.cv_id` to reference the most recent CV (`cvs.cv_id`).
+
+If your `profiles` table does not yet have a `cv_id` column, apply the migration in `supabase/schema.sql` which:
+
+- Adds `profiles.cv_id uuid` (nullable)
+- Adds a foreign key to `public.cvs(cv_id)` with `ON DELETE SET NULL`
+- Creates `idx_profiles_cv_id` for faster lookups
+
+Run the updated `supabase/schema.sql` in the Supabase SQL Editor using a service role to update your schema.
+
 ## Google Drive
 
 Set:

@@ -11,7 +11,7 @@ interface Step1Props {
 const Step1: React.FC<Step1Props> = ({ onExtracted, onUploadChange, onUploaded, previewUrl }) => {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Upload Your CV</h2>
+      <h2 className="text-2xl font-bold mb-8">Upload Your CV</h2>
       <UploadCv 
         onExtracted={onExtracted} 
         onUploadChange={onUploadChange} 

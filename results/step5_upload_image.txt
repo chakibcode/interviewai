@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Wed, 29 Oct 2025 12:33:49 GMT
+server: uvicorn
+content-length: 379
+content-type: application/json
+
+{"status":"uploaded","bucket":"cv2interviewBucket","key":"test-user-123/1761741230-converted.jpg","content_type":"image/jpeg","presigned_url":"https://rwgurwnglnxihjswjute.storage.supabase.co/storage/v1/s3/cv2interviewBucket/test-user-123/1761741230-converted.jpg?AWSAccessKeyId=55690d7de5c182a3461137ba9b0c00eb&Signature=vALSa%2FCJ24cThV%2FctltJ6HSLV%2Fo%3D&Expires=1761744831"}

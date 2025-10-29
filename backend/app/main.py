@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import Response
+from fastapi.responses import Response, PlainTextResponse
 from pydantic import BaseModel
 import os
 import io
@@ -36,6 +36,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
         "http://localhost:5175",
         "http://127.0.0.1:5175",
         "http://localhost:8081",
@@ -124,7 +126,7 @@ async def upload_cv(user_id: str = Form(...), file: UploadFile = File(...)):
   import uuid
   cv_id = str(uuid.uuid4())
   # Construct a local static URL for the uploaded PDF to satisfy potential NOT NULL constraints
-  public_pdf_url = f"http://localhost:8000/uploads/{user_id}/{safe_name}/cv.pdf"
+  public_pdf_url = f"http://localhost:8001/uploads/{user_id}/{safe_name}/cv.pdf"
   record = {
     "cv_id": cv_id,
     "user_id": user_id,
@@ -166,6 +168,10 @@ class ExtractRequest(BaseModel):
   pdf_path: str | None = None
   pdf_url: str | None = None
 
+# Simple path-only request for direct text extraction
+class ExtractPathRequest(BaseModel):
+  pdf_path: str
+
 class UpdateExtractionRequest(BaseModel):
   user_id: str
   cv_id: str
@@ -205,149 +211,56 @@ async def parse_cv_openai(req: ParseTextRequest):
           result[k] = extracted[k]
     return result
   except Exception as e:
+    msg = str(e)
+    if "OpenAI API error: 401" in msg or ("401" in msg and "OpenAI" in msg):
+      # Surface an authentication error directly to the client
+      raise HTTPException(status_code=401, detail="Invalid OpenAI API key or insufficient permissions. Set OPENAI_API_KEY and restart the backend.")
     raise HTTPException(status_code=500, detail=f"OpenAI parse failed: {e}")
 
 @app.post("/cv/extract")
-async def extract_cv(req: ExtractRequest):
+async def extract_cv(file: UploadFile = File(...)):
+  """
+  Accept a PDF file upload and return extracted text as plain text.
+  Body: multipart/form-data with field name 'file' containing the PDF.
+  Response: text/plain containing the extracted text.
+  """
   try:
-    supa = get_supabase_client()
-    # Fetch record to get stored PDF path when IDs are valid UUIDs
-    rows = []
-    try:
-      from uuid import UUID
-      UUID(str(req.user_id))
-      UUID(str(req.cv_id))
-      res = supa.table(SUPABASE_CVS_TABLE).select("cv_id,user_id,pdf_storage_path").eq("cv_id", req.cv_id).eq("user_id", req.user_id).execute()
-      rows = getattr(res, "data", []) if hasattr(res, "data") else (res.get("data") if isinstance(res, dict) else [])
-    except Exception:
-      rows = []
+    if not file:
+      raise HTTPException(status_code=400, detail="Missing file upload")
+    if str(file.content_type).lower() != "application/pdf":
+      raise HTTPException(status_code=400, detail="Only application/pdf is supported")
 
-    pdf_path = None
-    if rows:
-      row0 = rows[0] if isinstance(rows[0], dict) else rows[0]
-      pdf_path = row0.get("pdf_storage_path") if isinstance(row0, dict) else row0["pdf_storage_path"]
-    # Fallback: use provided pdf_path when DB lookup fails or field missing
-    if not pdf_path and req.pdf_path:
-      pdf_path = req.pdf_path
-    # Additional fallback: derive local path from pdf_url
-    if not pdf_path or not Path(str(pdf_path)).exists():
-      raise HTTPException(status_code=404, detail="Stored PDF not found on server")
+    # Persist to a temporary file for the extractor (which expects a path)
+    from uuid import uuid4
+    tmp_dir = UPLOAD_ROOT / "temp"
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    tmp_path = tmp_dir / f"tmp_extract_{uuid4()}.pdf"
 
-    # Extract plain text for verification and DB storage
+    data = await file.read()
+    if not data:
+      raise HTTPException(status_code=400, detail="Uploaded file is empty")
+    with open(tmp_path, "wb") as f:
+      f.write(data)
+
     try:
       extractor = PDFTextExtractor(ocr_pages=5, ocr_zoom=2.5)
-      plain_text = extractor.extract_text(pdf_path)
-    except Exception:
-      plain_text = ""
-
-    # Run OpenAI extraction instead of Mistral
-    try:
-      ai = OpenAIExtractor()
-      extracted = ai.extract_profile_from_text(plain_text) if plain_text else ai.extract_profile_from_pdf(pdf_path)
+      plain_text = extractor.extract_text(str(tmp_path))
     except Exception as e:
-      raise HTTPException(status_code=500, detail=f"Extraction failed: {e}")
+      raise HTTPException(status_code=500, detail=f"Text extraction failed: {e}")
+    finally:
+      # Best-effort cleanup
+      try:
+        if tmp_path.exists():
+          tmp_path.unlink()
+      except Exception:
+        pass
 
-    # Prepare filtered and derived fields
-    try:
-      filtered = {k: v for k, v in (extracted or {}).items() if v not in (None, [], "", {})}
-    except Exception:
-      filtered = {}
-
-    update_payload = {
-      "raw_extracted": extracted or {},
-      "filtered_extracted": filtered,
-      "skills": (extracted or {}).get("skills", []),
-      "education": (extracted or {}).get("education", []),
-      "experiences": (extracted or {}).get("experience", []),
-      "languages": (extracted or {}).get("languages", []),
-      "authors": (extracted or {}).get("authors", []),
-      "text_extracted": plain_text,
-      "status": "parsed",
-      "parse_model": OPENAI_MODEL,
-    }
-
-    # Generate thumbnail from first page, upload to Supabase Storage, and add to payload
-    thumbnail_url = None
-    try:
-      with open(pdf_path, "rb") as f:
-        pdf_bytes = f.read()
-      images = convert_from_bytes(pdf_bytes, fmt="jpeg")
-      if images:
-        first_page = images[0]
-        buf = io.BytesIO()
-        first_page.save(buf, format="JPEG", quality=85)
-        buf.seek(0)
-        key = f"{req.user_id}/{req.cv_id}/thumb.jpg"
-        s3 = get_s3_client_from_supabase_env()
-        s3.put_object(Bucket=SUPABASE_BUCKET_CVS, Key=key, Body=buf.getvalue(), ContentType="image/jpeg")
-        thumbnail_url = s3.generate_presigned_url("get_object", Params={"Bucket": SUPABASE_BUCKET_CVS, "Key": key}, ExpiresIn=3600)
-        update_payload["cv_image_path"] = key
-    except Exception as e:
-      print(f"❌ Thumbnail generation/upload failed: {e}")
-
-    # Update record in Supabase (best-effort)
-    try:
-      _ = supa.table(SUPABASE_CVS_TABLE).update(update_payload).eq("cv_id", req.cv_id).execute()
-      print(f"✅ Updated CV record with extracted data (OpenAI): {req.cv_id}")
-    except Exception as e:
-      print(f"❌ Failed to update CV record after extraction: {e}")
-      print(f"Update payload: {update_payload}")
-
-    # Also update profiles table to reference this cv_id (best-effort)
-    try:
-      _ = supa.table("profiles").update({"cv_id": req.cv_id}).eq("user_id", req.user_id).execute()
-      print(f"✅ Updated profile with cv_id for user: {req.user_id}")
-    except Exception as e:
-      print(f"❌ Failed to update profile cv_id: {e}")
-
-    # Delete local PDF now that processing is complete (best-effort)
-    try:
-      p = Path(str(pdf_path))
-      if p.exists():
-        p.unlink()
-        print(f"🧹 Deleted local PDF: {p}")
-    except Exception as e:
-      print(f"⚠️ Failed to delete local PDF: {e}")
-
-    return {
-      "user_id": req.user_id,
-      "cv_id": req.cv_id,
-      "extracted_raw": extracted or {},
-      "extracted_data": filtered,
-      "text_extracted": plain_text,
-      "thumbnail_url": thumbnail_url,
-    }
+    return PlainTextResponse(content=(plain_text or ""))
   except HTTPException:
     raise
   except Exception as e:
     raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")
 
-@app.post("/cv/update-extraction")
-async def update_extraction(req: UpdateExtractionRequest):
-  """Update the CV record with user-edited structured JSON."""
-  try:
-    supa = get_supabase_client()
-    extracted = req.extraction or {}
-    try:
-      filtered = {k: v for k, v in (extracted or {}).items() if v not in (None, [], "", {})}
-    except Exception:
-      filtered = {}
-
-    update_payload = {
-      "raw_extracted": extracted,
-      "filtered_extracted": filtered,
-      "skills": (extracted or {}).get("skills", []),
-      "education": (extracted or {}).get("education", []),
-      "experiences": (extracted or {}).get("experience", []),
-      "languages": (extracted or {}).get("languages", []),
-      "authors": (extracted or {}).get("authors", []),
-      "status": "parsed",
-    }
-
-    _ = supa.table(SUPABASE_CVS_TABLE).update(update_payload).eq("cv_id", req.cv_id).eq("user_id", req.user_id).execute()
-    return {"status": "ok", "cv_id": req.cv_id}
-  except Exception as e:
-    raise HTTPException(status_code=500, detail=f"Update failed: {e}")
 
 @app.post("/cv/extract-openai")
 async def extract_cv_openai(req: ExtractRequest):
@@ -399,6 +312,9 @@ async def extract_cv_openai(req: ExtractRequest):
       ai = OpenAIExtractor()
       extracted = ai.extract_profile_from_text(plain_text) if plain_text else ai.extract_profile_from_pdf(pdf_path)
     except Exception as e:
+      msg = str(e)
+      if "OpenAI API error: 401" in msg or ("401" in msg and "OpenAI" in msg):
+        raise HTTPException(status_code=401, detail="Invalid OpenAI API key or insufficient permissions. Set OPENAI_API_KEY and restart the backend.")
       raise HTTPException(status_code=500, detail=f"Extraction failed: {e}")
 
     # Prepare filtered and derived fields

@@ -197,6 +197,34 @@ create index if not exists idx_profiles_user_id on public.profiles(user_id);
 create index if not exists idx_profiles_email on public.profiles(email);
 create index if not exists idx_profiles_plan on public.profiles(plan);
 
+-- Link profiles to latest CV (optional association)
+-- Migration-safe: add column and FK only if missing
+DO $$
+BEGIN
+  -- Add cv_id column if it doesn't exist
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema='public' AND table_name='profiles' AND column_name='cv_id'
+  ) THEN
+    EXECUTE 'ALTER TABLE public.profiles ADD COLUMN cv_id uuid';
+  END IF;
+
+  -- Add foreign key constraint if not present
+  IF NOT EXISTS (
+    SELECT 1 
+    FROM pg_constraint 
+    WHERE conname = 'profiles_cv_id_fkey'
+  ) THEN
+    EXECUTE 'ALTER TABLE public.profiles 
+             ADD CONSTRAINT profiles_cv_id_fkey 
+             FOREIGN KEY (cv_id) REFERENCES public.cvs(cv_id) 
+             ON DELETE SET NULL';
+  END IF;
+END $$;
+
+-- Helpful index for cv_id lookups
+create index if not exists idx_profiles_cv_id on public.profiles(cv_id);
+
 -- Row Level Security for profiles
 alter table public.profiles enable row level security;
 

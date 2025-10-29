@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+date: Wed, 29 Oct 2025 12:37:46 GMT
+server: uvicorn
+content-length: 421
+content-type: application/json
+
+{"status":"uploaded","bucket":"cv2interviewBucket","key":"26b8f29d-4996-4603-81ea-f860dc735e38/1761741466-converted.jpg","content_type":"image/jpeg","presigned_url":"https://rwgurwnglnxihjswjute.storage.supabase.co/storage/v1/s3/cv2interviewBucket/26b8f29d-4996-4603-81ea-f860dc735e38/1761741466-converted.jpg?AWSAccessKeyId=55690d7de5c182a3461137ba9b0c00eb&Signature=8au3qTcMuaXfd8tRDUrEaXs76%2Bg%3D&Expires=1761745068"}
