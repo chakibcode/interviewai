@@ -101,24 +101,8 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
       onExtracted?.(extractedText);
       setExtractedPreview(extractedText);
 
-      // 2b) Analyze structured fields by sending plain text to /openai/parse_cv
-      try {
-        const parseResp = await fetch(`${BACKEND_URL}/openai/parse_cv`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: extractedText || "" }),
-        });
-        if (parseResp.ok) {
-          const parsedJson = await parseResp.json();
-          const structured = parsedJson ?? {};
-          onAnalyzed?.(structured, cvId);
-        } else {
-          const text = await parseResp.text();
-          console.warn("Parse CV failed:", text || parseResp.status);
-        }
-      } catch (err) {
-        console.warn("Parse CV error:", err);
-      }
+      // Parsing is handled in Dashboard via extractedText -> /openai/parse
+      // Avoid duplicate requests here; just continue the flow
 
       // 3) Convert the uploaded PDF to JPEG via backend
       const convertForm = new FormData();
@@ -142,7 +126,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
       if (pdfUrl) {
         onUploaded?.(pdfUrl);
       }
-      toast({ title: "CV processed", description: "Text extracted and thumbnail created." });
+      // Success toast removed per user request: don't show this message again
 
       // Refresh CV list
       if (user) {

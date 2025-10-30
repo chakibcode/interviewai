@@ -42,12 +42,12 @@ export default function Dashboard() {
   useEffect(() => {
     if (extractedText && extractedText.length > 0) {
       setIsLoading(true);
-      fetch(`${BACKEND_URL}/openai/parse_cv`, {
+      fetch(`${BACKEND_URL}/openai/parse`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: extractedText }),
+        body: JSON.stringify({ text: extractedText, user_id: user?.id ?? null }),
       })
         .then((res) => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -94,7 +94,14 @@ export default function Dashboard() {
                 previewUrl={previewUrl}
               />
             )}
-            {currentStep === 2 && <Step2 fullName={fullName} setFullName={setFullName} />}
+            {currentStep === 2 && (
+              <Step2
+                fullName={fullName}
+                setFullName={setFullName}
+                parsedData={parsedData}
+                userId={user?.id ?? null}
+              />
+            )}
             {currentStep === 3 && <Step3 story={story} setStory={setStory} />}
             {currentStep === 4 && <Step4 services={services} setServices={setServices} />}
             {currentStep === 5 && <Step5 budget={budget} setBudget={setBudget} />}
@@ -103,7 +110,13 @@ export default function Dashboard() {
             <Button onClick={handleBack} disabled={currentStep === 1}>
               Back
             </Button>
-            <Button onClick={handleNext} disabled={currentStep === steps.length}>
+            <Button
+              onClick={handleNext}
+              disabled={
+                currentStep === steps.length ||
+                (currentStep === 1 && (isLoading || !extractedText || extractedText.length === 0))
+              }
+            >
               Next
             </Button>
           </div>

@@ -17,13 +17,13 @@ const Stepper: React.FC<StepperProps> = ({ steps, currentStep }) => {
                   ? 'bg-green-500 text-white'
                   : index + 1 === currentStep
                   ? 'border-2 border-green-500 text-green-500'
-                  : 'bg-gray-200 text-gray-500'
+                  : 'bg-gray-200 text-green-500'
               }`}
             >
               {index + 1 < currentStep ? '✓' : index + 1}
             </div>
             <div className={`ml-4 font-medium ${
-              index + 1 === currentStep ? 'text-primary' : 'text-muted-foreground'
+              index + 1 === currentStep ? 'text-green-500' : 'text-muted-foreground'
             }`}>
               {step}
             </div>

@@ -73,8 +73,8 @@ class OpenAIExtractor:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
-            "temperature": 0,
-            "response_format": {"type": "json_object"},
+            # Some models only support default temperature; omit for compatibility
+            # "response_format": {"type": "json_object"},
         }
         resp = requests.post(self.API_URL, headers=headers, json=payload, timeout=90)
         if resp.status_code != 200:

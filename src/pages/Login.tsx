@@ -35,7 +35,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      
       <main className="container mx-auto px-4 py-10">
         <div className="grid md:grid-cols-2 gap-6 items-stretch">
           {/* Left visual panel */}

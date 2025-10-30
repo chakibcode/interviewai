@@ -179,6 +179,7 @@ class UpdateExtractionRequest(BaseModel):
 
 class ParseTextRequest(BaseModel):
   text: str
+  user_id: str | None = None
 
 @app.post("/openai/parse_cv")
 async def parse_cv_openai(req: ParseTextRequest):
@@ -202,20 +203,44 @@ async def parse_cv_openai(req: ParseTextRequest):
       return default_schema
 
     ai = OpenAIExtractor()
-    extracted = ai.extract_profile_from_text(text)
-    # Ensure output contains exactly the required keys
     result = default_schema.copy()
-    if isinstance(extracted, dict):
-      for k in result.keys():
-        if k in extracted:
-          result[k] = extracted[k]
+    try:
+      extracted = ai.extract_profile_from_text(text)
+      if isinstance(extracted, dict):
+        for k in result.keys():
+          if k in extracted:
+            result[k] = extracted[k]
+    except Exception as e:
+      msg = str(e)
+      if "OpenAI API error: 401" in msg or ("401" in msg and "OpenAI" in msg):
+        # Surface an authentication error directly to the client
+        raise HTTPException(status_code=401, detail="Invalid OpenAI API key or insufficient permissions. Set OPENAI_API_KEY and restart the backend.")
+      # Fallback: return default schema on parse errors
+      print(f"Warning: OpenAI parse failed, falling back to default schema: {e}")
+
+    # Optionally save to uploads/<user_id>/info.json when user_id is provided
+    try:
+      if req.user_id:
+        user_dir = UPLOAD_ROOT / str(req.user_id)
+        user_dir.mkdir(parents=True, exist_ok=True)
+        info_path = user_dir / "info.json"
+        import json as _json
+        with info_path.open("w", encoding="utf-8") as f:
+          _json.dump(result, f, ensure_ascii=False, indent=2)
+    except Exception as _e:
+      # Do not fail the request if saving to file has issues
+      print(f"Warning: failed to save parsed result for user {req.user_id}: {_e}")
+
     return result
   except Exception as e:
-    msg = str(e)
-    if "OpenAI API error: 401" in msg or ("401" in msg and "OpenAI" in msg):
-      # Surface an authentication error directly to the client
-      raise HTTPException(status_code=401, detail="Invalid OpenAI API key or insufficient permissions. Set OPENAI_API_KEY and restart the backend.")
+    # Unexpected non-OpenAI errors (e.g., request deserialization). Keep as 500.
     raise HTTPException(status_code=500, detail=f"OpenAI parse failed: {e}")
+
+# Alias route to match frontend naming preference: /openai/parse
+@app.post("/openai/parse")
+async def parse_openai(req: ParseTextRequest):
+  # Delegate to the existing implementation
+  return await parse_cv_openai(req)
 
 @app.post("/cv/extract")
 async def extract_cv(file: UploadFile = File(...)):
