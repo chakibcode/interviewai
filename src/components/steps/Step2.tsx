@@ -187,13 +187,13 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
 
       {/* Personal Information */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-indigo-700 border-b border-indigo-200 pb-2">Personal Information</h2>
+        <h2 className="text-lg font-semibold text-indigo-700 border-b  border-indigo-200 pb-2">Personal Information</h2>
         <div className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
             <input
               type="text"
-              className="w-full rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+              className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Aleks Ludkee"
@@ -204,7 +204,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
               <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
               <input
                 type="email"
-                className="w-full rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+                className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="e.g. a.ludkee@email.com"
@@ -214,7 +214,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
               <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
               <input
                 type="tel"
-                className="w-full rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+                className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="e.g. (123) 456-7890"
@@ -225,7 +225,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
             <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
             <input
               type="text"
-              className="w-full rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+              className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="e.g. Nashville, TN"
@@ -248,7 +248,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
         <div className="flex gap-2">
           <input
             type="text"
-            className="flex-1 rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="flex-1 rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             value={skillInput}
             onChange={(e) => setSkillInput(e.target.value)}
             placeholder="Add a skill (e.g. React.js)"
@@ -271,7 +271,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
         <div className="flex gap-2">
           <input
             type="text"
-            className="flex-1 rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="flex-1 rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             value={linkInput}
             onChange={(e) => setLinkInput(e.target.value)}
             placeholder="Add a link (e.g. github.com/username)"
@@ -304,35 +304,35 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="Company"
             value={newExp.company}
             onChange={(e) => setNewExp({ ...newExp, company: e.target.value })}
           />
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="Role"
             value={newExp.role}
             onChange={(e) => setNewExp({ ...newExp, role: e.target.value })}
           />
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="Start Date"
             value={newExp.startDate}
             onChange={(e) => setNewExp({ ...newExp, startDate: e.target.value })}
           />
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="End Date"
             value={newExp.endDate}
             onChange={(e) => setNewExp({ ...newExp, endDate: e.target.value })}
           />
         </div>
         <textarea
-          className="w-full rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+          className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
           placeholder="Summary"
           value={newExp.summary}
           onChange={(e) => setNewExp({ ...newExp, summary: e.target.value })}
@@ -363,28 +363,28 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="Institution"
             value={newEdu.institution}
             onChange={(e) => setNewEdu({ ...newEdu, institution: e.target.value })}
           />
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="Degree"
             value={newEdu.degree}
             onChange={(e) => setNewEdu({ ...newEdu, degree: e.target.value })}
           />
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="Start Date"
             value={newEdu.startDate}
             onChange={(e) => setNewEdu({ ...newEdu, startDate: e.target.value })}
           />
           <input
             type="text"
-            className="rounded-md border-2 border-slate-200 px-3 py-2 text-sm bg-background focus:outline-none focus:border-indigo-500"
+            className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
             placeholder="End Date"
             value={newEdu.endDate}
             onChange={(e) => setNewEdu({ ...newEdu, endDate: e.target.value })}
