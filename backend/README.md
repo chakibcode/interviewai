@@ -7,6 +7,46 @@ FastAPI backend for InterviewAI.
 - Start server: `uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
 - Docs: `http://localhost:8000/docs`
 
+## Secrets & Environment Variables
+
+Configure sensitive values via environment variables (or a `.env` file loaded at runtime). Do not hardcode secrets in source code.
+
+- `OPENAI_API_KEY` — OpenAI API key
+- `OPENAI_MODEL` — model name (e.g., `gpt-4o-mini`)
+- `SUPABASE_URL` — Supabase project URL
+- `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key
+- `SUPABASE_BUCKET_CVS` — Storage bucket for CV PDFs (default `cv2interviewBucket`)
+- `SUPABASE_BUCKET_DOCS` — Storage bucket for documents
+- `SUPABASE_BUCKET_PROFILE_PHOTOS` — Storage bucket for profile photos
+- `MAX_UPLOAD_MB` — max upload size in MB (default `2`)
+- `GOOGLE_SERVICE_ACCOUNT_FILE` — path to service account JSON
+- `GOOGLE_DRIVE_FOLDER_ID` — optional Drive folder ID for uploads
+- `GOOGLE_OAUTH_CLIENT_FILE` — path to OAuth client JSON
+- `GOOGLE_OAUTH_TOKEN_FILE` — path to OAuth token JSON (generated)
+- `SUPABASE_ENDPOINT` — S3-compatible endpoint for Supabase Storage
+- `ACCESS_KEY_ID` — S3 access key id
+- `SERCET_ACCESS_KEY` — S3 secret access key (env name preserved as in code)
+
+Example `.env` (do not commit):
+
+```
+OPENAI_API_KEY=sk-...your-key...
+OPENAI_MODEL=gpt-4o-mini
+SUPABASE_URL=https://<project>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
+SUPABASE_BUCKET_CVS=cv2interviewBucket
+SUPABASE_BUCKET_DOCS=documents
+SUPABASE_BUCKET_PROFILE_PHOTOS=profile-photos
+MAX_UPLOAD_MB=5
+GOOGLE_SERVICE_ACCOUNT_FILE=/absolute/path/to/google.json
+GOOGLE_DRIVE_FOLDER_ID=
+GOOGLE_OAUTH_CLIENT_FILE=/absolute/path/to/google-oauth.json
+GOOGLE_OAUTH_TOKEN_FILE=/absolute/path/to/token.json
+SUPABASE_ENDPOINT=https://<project>.storage.supabase.co/storage/v1/s3
+ACCESS_KEY_ID=...
+SERCET_ACCESS_KEY=...
+```
+
 ## Supabase Storage
 
 Configure environment variables:

@@ -13,8 +13,6 @@ import Step5 from "@/components/steps/Step5";
 import { BACKEND_URL } from "@/services/api";
 
 
-
-
 export default function Dashboard() {
   const [currentStep, setCurrentStep] = useState(1);
   const [extractedText, setExtractedText] = useState<string | null>(null);
@@ -48,15 +46,24 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ text: extractedText, user_id: user?.id ?? null }),
       })
-        .then((res) => {
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        .then(async (res) => {
+          if (!res.ok) {
+            if (res.status === 401) {
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData.detail || "OpenAI API key is missing or invalid. Please configure OPENAI_API_KEY in the backend environment.");
+            }
+            throw new Error(`HTTP ${res.status}`);
+          }
           return res.json();
         })
         .then((data) => {
           setStructuredText(JSON.stringify(data, null, 2));
         })
         .catch((err) => {
-          toast({ title: "Failed to parse CV", description: String(err), variant: "destructive" });
+          const message = String(err).includes("OpenAI API key") 
+            ? "OpenAI API key is missing or invalid. Please check the backend configuration."
+            : `Failed to parse CV: ${err}`;
+          toast({ title: "CV Parsing Error", description: message, variant: "destructive" });
         })
         .finally(() => {
           setIsLoading(false);
