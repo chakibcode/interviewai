@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/services/supabaseClient";
 import { authService, type AuthUser } from "@/services/authService";
@@ -21,6 +22,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
   const [user, setUser] = useState<AuthUser | null>(null);
   const [cvs, setCvs] = useState<Cv[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState<number>(0);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | undefined>(undefined);
   const [extractedPreview, setExtractedPreview] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -60,6 +62,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
     }
 
     setUploading(true);
+    setProgress(10);
     onUploadChange?.(true);
     // Clear any previous extracted text
     onExtracted?.(null);
@@ -82,6 +85,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
       const cvId = uploadJson?.cv_id ?? user.id;
       const pdfPath = uploadJson?.pdf_storage_path;
       const pdfUrl: string = uploadJson?.original_pdf_url || "";
+      setProgress(30);
 
       // 2) Request extraction via new endpoint (multipart/form-data with the file)
       const extractForm = new FormData();
@@ -100,6 +104,8 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
       const extractedText = ((await extractResp.text()) || "").trim();
       onExtracted?.(extractedText);
       setExtractedPreview(extractedText);
+      setProgress(60);
+      
 
       // Parsing is handled in Dashboard via extractedText -> /openai/parse
       // Avoid duplicate requests here; just continue the flow
@@ -121,6 +127,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
         .from("cv2interviewBucket")
         .upload(imgPath, imageBlob, { upsert: true, contentType: "image/jpeg" });
       if (uploadRes.error) throw new Error(uploadRes.error.message);
+      setProgress(90);
   
       // 5) Use backend-served public URL for the uploaded PDF for preview
       if (pdfUrl) {
@@ -133,12 +140,16 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
         const userCvs = await cvService.getCvs(user.id);
         setCvs(userCvs);
       }
+      setProgress(100);
+      
     } catch (e: any) {
       toast({ title: "Upload failed", description: e.message ?? "Could not process CV.", variant: "destructive" });
       if (!extractedPreview) setExtractedPreview("Upload or extraction failed.");
     } finally {
       setUploading(false);
       onUploadChange?.(false);
+      // Reset progress shortly after finishing
+      setTimeout(() => setProgress(0), 600);
     }
   };
 
@@ -168,34 +179,32 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
               <Link to="/login" className="text-xs text-accent underline">Login</Link>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <Input
-              ref={fileInputRef}
-              type="file"
-              accept="application/pdf"
-              className="hidden"
-              onChange={async (e) => {
-                const f = e.target.files?.[0];
-                if (f) await handleCvUpload(f);
-              }}
-            />
-            <Button
-              disabled={uploading}
-              onClick={() => fileInputRef.current?.click()}
-              className="bg-green-500 hover:bg-green-600 text-black"
-            >
-              {uploading ? "Uploading..." : "Upload CV"}
-            </Button>
+      <div className="flex items-center gap-3">
+        <Input
+          ref={fileInputRef}
+          type="file"
+          accept="application/pdf"
+          className="hidden"
+          onChange={async (e) => {
+            const f = e.target.files?.[0];
+            if (f) await handleCvUpload(f);
+          }}
+        />
+        <Button
+          disabled={uploading}
+          onClick={() => fileInputRef.current?.click()}
+          className="bg-green-500 hover:bg-green-600 text-black"
+        >
+          {uploading ? "Uploading..." : "Upload CV"}
+        </Button>
+        {uploading && (
+          <div className="flex-1">
+            <Progress value={progress} className="h-2 bg-slate-200" />
           </div>
+        )}
+      </div>
           <div className="text-xs text-muted-foreground">Accepted format: PDF, max 10MB.</div>
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Extracted Text</h3>
-            <div className="rounded-md border bg-muted/30 p-3 max-h-[220px] overflow-auto">
-              <pre className="text-xs whitespace-pre-wrap break-words">
-                {extractedPreview || "No text extracted yet."}
-              </pre>
-            </div>
-          </div>
+          {/* Removed extracted text preview per user request */}
         </div>
         <div className="justify-self-end max-h-[200px] overflow-y-auto space-y-2">
           {pdfToRender && (

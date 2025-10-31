@@ -83,23 +83,24 @@ export default function Login() {
 
               <form onSubmit={onSubmit} className="mt-6 space-y-4">
                 <div>
-                  <label className="text-sm font-medium">Email</label>
+                  <label className="text-sm font-medium bg-green">Email</label>
                   <Input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="jane@example.com"
-                    className="mt-1"
+                    className="mt-1 border border-green-500"
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium">Mot de passe</label>
                   <Input
+
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="mt-1"
+                    className="mt-1 border border-green-500"
                   />
                 </div>
 

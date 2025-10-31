@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import Response, PlainTextResponse
@@ -101,7 +101,7 @@ async def get_profile(user_id: str):
     }
 
 @app.post("/cv/upload")
-async def upload_cv(user_id: str = Form(...), file: UploadFile = File(...)):
+async def upload_cv(request: Request, user_id: str = Form(...), file: UploadFile = File(...)):
   if file.content_type != "application/pdf":
     raise HTTPException(status_code=400, detail="Only PDF files are accepted")
   # Limit size to ~10MB by streaming chunks
@@ -126,7 +126,10 @@ async def upload_cv(user_id: str = Form(...), file: UploadFile = File(...)):
   import uuid
   cv_id = str(uuid.uuid4())
   # Construct a local static URL for the uploaded PDF to satisfy potential NOT NULL constraints
-  public_pdf_url = f"http://localhost:8001/uploads/{user_id}/{safe_name}/cv.pdf"
+  # Build a public URL based on the current request base URL to avoid
+  # hardcoded ports. This will work whether the server runs on 8000 or 8001.
+  base = str(request.base_url).rstrip("/")
+  public_pdf_url = f"{base}/uploads/{user_id}/{safe_name}/cv.pdf"
   record = {
     "cv_id": cv_id,
     "user_id": user_id,

@@ -38,10 +38,14 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
   // Experience
   const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
   const [newExp, setNewExp] = useState<ExperienceItem>({ company: '', role: '', startDate: '', endDate: '', summary: '' });
+  const [editingExpIndex, setEditingExpIndex] = useState<number | null>(null);
+  const [editingExp, setEditingExp] = useState<ExperienceItem | null>(null);
 
   // Education
   const [education, setEducation] = useState<EducationItem[]>([]);
   const [newEdu, setNewEdu] = useState<EducationItem>({ institution: '', degree: '', startDate: '', endDate: '' });
+  const [editingEduIndex, setEditingEduIndex] = useState<number | null>(null);
+  const [editingEdu, setEditingEdu] = useState<EducationItem | null>(null);
 
   // Prefill from parsedData
   useEffect(() => {
@@ -148,6 +152,19 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
     setNewExp({ company: '', role: '', startDate: '', endDate: '', summary: '' });
   };
   const removeExperience = (i: number) => setExperiences((prev) => prev.filter((_, idx) => idx !== i));
+  const startEditExp = (i: number) => {
+    setEditingExpIndex(i);
+    setEditingExp(experiences[i]);
+  };
+  const cancelEditExp = () => {
+    setEditingExpIndex(null);
+    setEditingExp(null);
+  };
+  const saveEditExp = () => {
+    if (editingExpIndex === null || !editingExp) return;
+    setExperiences((prev) => prev.map((e, idx) => (idx === editingExpIndex ? editingExp : e)));
+    cancelEditExp();
+  };
 
   const addEducation = () => {
     if (!newEdu.institution || !newEdu.degree) return;
@@ -155,6 +172,19 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
     setNewEdu({ institution: '', degree: '', startDate: '', endDate: '' });
   };
   const removeEducation = (i: number) => setEducation((prev) => prev.filter((_, idx) => idx !== i));
+  const startEditEdu = (i: number) => {
+    setEditingEduIndex(i);
+    setEditingEdu(education[i]);
+  };
+  const cancelEditEdu = () => {
+    setEditingEduIndex(null);
+    setEditingEdu(null);
+  };
+  const saveEditEdu = () => {
+    if (editingEduIndex === null || !editingEdu) return;
+    setEducation((prev) => prev.map((e, idx) => (idx === editingEduIndex ? editingEdu : e)));
+    cancelEditEdu();
+  };
 
   const handleSave = () => {
     // Persist name to parent; other fields can be wired later
@@ -181,7 +211,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-primary mb-1">Resume Editor</h1>
+        <h1 className="text-2xl font-bold text-green-400 text-primary mb-1">Resume Editor</h1>
         <p className="text-sm text-muted-foreground">Update your professional information</p>
       </div>
 
@@ -192,10 +222,12 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
             <input
+
               type="text"
               className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              
               placeholder="e.g. Aleks Ludkee"
             />
           </div>
@@ -283,24 +315,75 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
       {/* Experience */}
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-indigo-700 border-b border-indigo-200 pb-2">Work Experience</h2>
-        {experiences.map((exp, i) => (
-          <div key={i} className="bg-slate-50 border border-slate-200 rounded-md p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="font-medium text-slate-800 text-sm">
-                {exp.company} — {exp.role}
-              </div>
-              <div className="text-xs text-slate-500">
-                {exp.startDate} – {exp.endDate}
-              </div>
+        {experiences.map((exp, i) => {
+          const isEditing = editingExpIndex === i;
+          return (
+            <div key={i} className="bg-slate-50 border border-slate-200 rounded-md p-4 space-y-2">
+              {!isEditing ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium text-slate-800 text-sm">
+                      {exp.company} — {exp.role}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {exp.startDate} – {exp.endDate}
+                    </div>
+                  </div>
+                  {exp.summary && (
+                    <p className="text-sm text-slate-700">{exp.summary}</p>
+                  )}
+                  <div className="flex gap-2">
+                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => startEditExp(i)}>Edit</button>
+                    <button className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => removeExperience(i)}>Remove</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="Company"
+                      value={editingExp?.company ?? ''}
+                      onChange={(e) => setEditingExp({ ...(editingExp as ExperienceItem), company: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="Role"
+                      value={editingExp?.role ?? ''}
+                      onChange={(e) => setEditingExp({ ...(editingExp as ExperienceItem), role: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="Start Date"
+                      value={editingExp?.startDate ?? ''}
+                      onChange={(e) => setEditingExp({ ...(editingExp as ExperienceItem), startDate: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="End Date"
+                      value={editingExp?.endDate ?? ''}
+                      onChange={(e) => setEditingExp({ ...(editingExp as ExperienceItem), endDate: e.target.value })}
+                    />
+                  </div>
+                  <textarea
+                    className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                    placeholder="Summary"
+                    value={editingExp?.summary ?? ''}
+                    onChange={(e) => setEditingExp({ ...(editingExp as ExperienceItem), summary: e.target.value })}
+                  />
+                  <div className="flex gap-2">
+                    <button className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded-md text-xs" onClick={saveEditExp}>Save</button>
+                    <button className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded-md text-xs" onClick={cancelEditExp}>Cancel</button>
+                  </div>
+                </>
+              )}
             </div>
-            {exp.summary && (
-              <p className="text-sm text-slate-700">{exp.summary}</p>
-            )}
-            <div className="flex gap-2">
-              <button className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => removeExperience(i)}>Remove</button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             type="text"
@@ -345,21 +428,66 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
       {/* Education */}
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-indigo-700 border-b border-indigo-200 pb-2">Education</h2>
-        {education.map((edu, i) => (
-          <div key={i} className="bg-slate-50 border border-slate-200 rounded-md p-4 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="font-medium text-slate-800 text-sm">
-                {edu.institution} — {edu.degree}
-              </div>
-              <div className="text-xs text-slate-500">
-                {edu.startDate} – {edu.endDate}
-              </div>
+        {education.map((edu, i) => {
+          const isEditing = editingEduIndex === i;
+          return (
+            <div key={i} className="bg-slate-50 border border-slate-200 rounded-md p-4 space-y-2">
+              {!isEditing ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium text-slate-800 text-sm">
+                      {edu.institution} — {edu.degree}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {edu.startDate} – {edu.endDate}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => startEditEdu(i)}>Edit</button>
+                    <button className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => removeEducation(i)}>Remove</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="Institution"
+                      value={editingEdu?.institution ?? ''}
+                      onChange={(e) => setEditingEdu({ ...(editingEdu as EducationItem), institution: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="Degree"
+                      value={editingEdu?.degree ?? ''}
+                      onChange={(e) => setEditingEdu({ ...(editingEdu as EducationItem), degree: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="Start Date"
+                      value={editingEdu?.startDate ?? ''}
+                      onChange={(e) => setEditingEdu({ ...(editingEdu as EducationItem), startDate: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      className="rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
+                      placeholder="End Date"
+                      value={editingEdu?.endDate ?? ''}
+                      onChange={(e) => setEditingEdu({ ...(editingEdu as EducationItem), endDate: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="bgGreen-600 hover:bg-green-500 text-white px-3 py-1 rounded-md text-xs" onClick={saveEditEdu}>Save</button>
+                    <button className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded-md text-xs" onClick={cancelEditEdu}>Cancel</button>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="flex gap-2">
-              <button className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => removeEducation(i)}>Remove</button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             type="text"

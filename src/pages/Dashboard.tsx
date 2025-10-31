@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/use-toast";
 import { authService, type AuthUser } from "@/services/authService";
 import Stepper from "@/components/Stepper";
 import Step1 from "@/components/steps/Step1";
-import Step2 from "@/components/steps/Step2";
 import Step3 from "@/components/steps/Step3";
 import Step4 from "@/components/steps/Step4";
 import Step5 from "@/components/steps/Step5";
@@ -30,7 +29,7 @@ export default function Dashboard() {
   const [services, setServices] = useState("");
   const [budget, setBudget] = useState("");
 
-  const steps = ["Upload CV", "Your Name", "Your Story", "Services", "Budget"];
+  const steps = ["Upload CV", "Your Story", "Services", "Budget"];
 
   useEffect(() => {
     (async () => {
@@ -92,19 +91,15 @@ export default function Dashboard() {
                 onUploadChange={setIsLoading}
                 onUploaded={setPreviewUrl}
                 previewUrl={previewUrl}
-              />
-            )}
-            {currentStep === 2 && (
-              <Step2
                 fullName={fullName}
                 setFullName={setFullName}
                 parsedData={parsedData}
                 userId={user?.id ?? null}
               />
             )}
-            {currentStep === 3 && <Step3 story={story} setStory={setStory} />}
-            {currentStep === 4 && <Step4 services={services} setServices={setServices} />}
-            {currentStep === 5 && <Step5 budget={budget} setBudget={setBudget} />}
+            {currentStep === 2 && <Step3 story={story} setStory={setStory} />}
+            {currentStep === 3 && <Step4 services={services} setServices={setServices} />}
+            {currentStep === 4 && <Step5 budget={budget} setBudget={setBudget} />}
           </div>
           <div className="flex justify-between">
             <Button onClick={handleBack} disabled={currentStep === 1}>

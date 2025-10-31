@@ -1,47 +1,79 @@
 {
-  "full_name": "ALEKS LUDKEE",
-  "email": "a.ludkee@email.com",
-  "phone": "(123) 456-7890",
-  "location": "Nashville, TN",
-  "links": [
-    "LinkedIn",
-    "Github"
-  ],
+  "full_name": "Youness EL MAJDI",
+  "email": "yassineazerd@icloud.com",
+  "phone": "+212 653 12 20 41",
+  "location": "Agadir 80000",
+  "links": [],
   "skills": [
-    "JavaScript",
-    "HTML",
-    "CSS",
-    ".NET",
-    "React.js",
-    "Angular.js",
-    "Node.js",
-    "Rest APIs",
-    "Spring",
-    "SOAP",
-    "Scrum/Agile"
+    "Efficacité au travail",
+    "Discipline",
+    "Sérieux",
+    "Esprit d'équipe",
+    "Rapidité d'exécution",
+    "Dynamique",
+    "Responsabilité",
+    "Arabe",
+    "Français",
+    "Anglais",
+    "Tachlhit",
+    "Permis conduire B",
+    "Préparation Permis conduire C"
   ],
   "education": [
     {
-      "institution": "University of Tennessee",
-      "degree": "B.S. Computer Science",
-      "start_date": "September 2015",
-      "end_date": "June 2019"
+      "institution": "Ibno Zohr Ait Melloul",
+      "degree": "Licence fondamentale filière Droit",
+      "start_date": null,
+      "end_date": "2024"
+    },
+    {
+      "institution": "Ibno Zohr Ait Melloul",
+      "degree": "Diplôme d'études universitaires (DEUG) filière Droit",
+      "start_date": "2021",
+      "end_date": "2022"
+    },
+    {
+      "institution": "Lycée Al Majd Azrou Ait Melloul",
+      "degree": "Baccalauréat Lettre en Sciences Humains",
+      "start_date": "2019",
+      "end_date": "2020"
     }
   ],
   "experience": [
     {
-      "company": "Deloitte",
-      "role": "Full-Stack Developer",
-      "start_date": "August 2020",
-      "end_date": "current",
-      "summary": "Designed, developed, and modified 25+ software systems and custom components; developed 30+ new software solutions by analyzing system performance standards; analyzed systems flow, data usage, and work processes and investigated problem areas; integrated existing software into 13 upgraded/modified systems for higher performance; developed and executed 200+ test procedures for software components; analyzed 30+ user requirements to derive technical software design and performance requirements; planned, tracked, and managed deliverables on 200+ short-term sprints and 50+ long-term deployments."
+      "company": "JAOUDA / COPAG",
+      "role": "Vendeur",
+      "start_date": "07/2024",
+      "end_date": "08/2025",
+      "summary": "Vente en contact direct avec les clients; saisie des commandes et remplissage des bons."
     },
     {
-      "company": "Randstad Technologies",
-      "role": "Jr. Full-Stack Developer",
-      "start_date": "June 2019",
-      "end_date": "August 2020",
-      "summary": "Developed code following common security practices and development design patterns; wrote 200+ unit tests to verify functionality of user interfaces, back-end processing, connectivity, and relational database interactions; maintained 8+ systems and applications as Tier 2 support (break-fix and data changes); documented technical specifications and dependencies of applications; participated in planning and execution of 10+ business continuity/disaster recovery exercises; implemented 25+ system and application designs."
+      "company": "Silda",
+      "role": "Collecte et Contrôle de Qualité du Lait",
+      "start_date": null,
+      "end_date": null,
+      "summary": "Collecte et contrôle de la qualité du lait au sein de l’unité de production."
+    },
+    {
+      "company": "Société des eaux Sidi Ali (Agadir)",
+      "role": null,
+      "start_date": null,
+      "end_date": null,
+      "summary": "Expérience professionnelle au sein de la société des eaux Sidi Ali à Agadir."
+    },
+    {
+      "company": "Supermarché (Casablanca)",
+      "role": null,
+      "start_date": null,
+      "end_date": null,
+      "summary": "Expérience en vente/commerce dans un supermarché à Casablanca."
+    },
+    {
+      "company": "E-commerce (à domicile)",
+      "role": null,
+      "start_date": null,
+      "end_date": null,
+      "summary": "Expérience en e-commerce à domicile."
     }
   ]
 }
