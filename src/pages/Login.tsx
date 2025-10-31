@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { authService } from "@/services/authService";
 import { useToast } from "@/hooks/use-toast";
 import { Apple, Github } from "lucide-react";
+import cvImage from "@/assets/cv_image.webp";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ export default function Login() {
           {/* Left visual panel */}
           <section className="hidden md:block relative rounded-2xl overflow-hidden border bg-card">
             <img
-              src="/placeholder.svg"
+              src={cvImage}
               alt="Login visual"
               className="absolute inset-0 w-full h-full object-cover opacity-70"
             />
@@ -59,11 +60,6 @@ export default function Login() {
             </div>
 
             <div className="relative z-10 px-6 pb-6 md:px-10 md:pb-10 mt-auto h-full flex flex-col justify-end">
-              <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
-                Capturing Moments,
-                <br />
-                Creating Memories
-              </h2>
               <div className="flex items-center gap-2 mt-4 opacity-80">
                 <span className="inline-block w-8 h-1 rounded-full bg-muted" />
                 <span className="inline-block w-8 h-1 rounded-full bg-muted" />
@@ -89,7 +85,7 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="jane@example.com"
-                    className="mt-1 border border-green-500"
+                    className="mt-1 border-spacing-2 border-green-500"
                   />
                 </div>
                 <div>

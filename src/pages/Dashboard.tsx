@@ -95,6 +95,8 @@ export default function Dashboard() {
                 setFullName={setFullName}
                 parsedData={parsedData}
                 userId={user?.id ?? null}
+                extractedText={extractedText}
+                isLoading={isLoading}
               />
             )}
             {currentStep === 2 && <Step3 story={story} setStory={setStory} />}
@@ -109,7 +111,13 @@ export default function Dashboard() {
               onClick={handleNext}
               disabled={
                 currentStep === steps.length ||
-                (currentStep === 1 && (isLoading || !extractedText || extractedText.length === 0))
+                (currentStep === 1 && (
+                  isLoading ||
+                  !extractedText ||
+                  extractedText.length === 0 ||
+                  !parsedData ||
+                  Object.keys(parsedData).length === 0
+                ))
               }
             >
               Next

@@ -16,9 +16,11 @@ interface UploadCvProps {
   onAnalyzed?: (data: any, cvId: string) => void;
   onUploadChange?: (uploading: boolean) => void;
   previewUrl?: string | null;
+  nextReady?: boolean;
+  parseLoading?: boolean;
 }
 
-export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUploadChange, previewUrl }: UploadCvProps) {
+export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUploadChange, previewUrl, nextReady, parseLoading }: UploadCvProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [cvs, setCvs] = useState<Cv[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -140,7 +142,8 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
         const userCvs = await cvService.getCvs(user.id);
         setCvs(userCvs);
       }
-      setProgress(100);
+      // Keep at 90% here; "parsing" phase will display ~95% until ready
+      setProgress(90);
       
     } catch (e: any) {
       toast({ title: "Upload failed", description: e.message ?? "Could not process CV.", variant: "destructive" });
@@ -148,8 +151,7 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
     } finally {
       setUploading(false);
       onUploadChange?.(false);
-      // Reset progress shortly after finishing
-      setTimeout(() => setProgress(0), 600);
+      // Do not reset progress here; we will finalize to 100% when nextReady
     }
   };
 
@@ -168,6 +170,36 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
     if (cvs.length > 0) return cvs[0].preview_url;
     return undefined;
   }, [localPreviewUrl, cvs, previewUrl]);
+
+  // When data is ready (nextReady), briefly show 100% then reset
+  useEffect(() => {
+    if (nextReady) {
+      setProgress(100);
+      const t = setTimeout(() => setProgress(0), 600);
+      return () => clearTimeout(t);
+    }
+  }, [nextReady]);
+
+  // Step label text for progress phases
+  const statusText = useMemo(() => {
+    if (uploading || progress > 0) {
+      if (progress < 30) return "Step 1: Uploading CV";
+      if (parseLoading) return "Step 3: Analyse the CV";
+      if (progress < 90) return "Step 2: Get Thumbnail";
+      return !nextReady ? "Step 3: Analyse the CV" : "Step 4: Get Data";
+    }
+    return "";
+  }, [uploading, progress, parseLoading, nextReady]);
+
+  // Percent display, omit during parsing phase (parseLoading)
+  const displayPercent = useMemo(() => {
+    if (uploading) return Math.round(progress);
+    if (!nextReady) {
+      if (parseLoading) return null;
+      return Math.max(Math.round(progress), 95);
+    }
+    return Math.round(progress);
+  }, [uploading, progress, nextReady, parseLoading]);
 
   return (
     <section className="rounded-xl border bg-card p-6">
@@ -197,9 +229,13 @@ export default function UploadCv({ onUploaded, onExtracted, onAnalyzed, onUpload
         >
           {uploading ? "Uploading..." : "Upload CV"}
         </Button>
-        {uploading && (
-          <div className="flex-1">
-            <Progress value={progress} className="h-2 bg-slate-200" />
+        {(uploading || progress > 0) && (
+          <div className="flex items-center gap-2 flex-1">
+            {/* Keep progress at ~95% during parse phase until Next is ready */}
+            <Progress value={uploading ? progress : (!nextReady ? Math.max(progress, 95) : progress)} className="h-2 bg-slate-200" />
+            <span className="text-xs text-muted-foreground">
+              {statusText}{displayPercent !== null ? ` — ${displayPercent}%` : ""}
+            </span>
           </div>
         )}
       </div>

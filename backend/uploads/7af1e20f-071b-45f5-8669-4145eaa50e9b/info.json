@@ -1,79 +1,47 @@
 {
-  "full_name": "Youness EL MAJDI",
-  "email": "yassineazerd@icloud.com",
-  "phone": "+212 653 12 20 41",
-  "location": "Agadir 80000",
-  "links": [],
+  "full_name": "Aleks Ludkee",
+  "email": "a.ludkee@email.com",
+  "phone": "(123) 456-7890",
+  "location": "Nashville, TN",
+  "links": [
+    "LinkedIn",
+    "Github"
+  ],
   "skills": [
-    "Efficacité au travail",
-    "Discipline",
-    "Sérieux",
-    "Esprit d'équipe",
-    "Rapidité d'exécution",
-    "Dynamique",
-    "Responsabilité",
-    "Arabe",
-    "Français",
-    "Anglais",
-    "Tachlhit",
-    "Permis conduire B",
-    "Préparation Permis conduire C"
+    "JavaScript",
+    "HTML",
+    "CSS",
+    ".NET",
+    "React.js",
+    "Angular.js",
+    "Node.js",
+    "Rest APIs",
+    "Spring",
+    "SOAP",
+    "Scrum/Agile"
   ],
   "education": [
     {
-      "institution": "Ibno Zohr Ait Melloul",
-      "degree": "Licence fondamentale filière Droit",
-      "start_date": null,
-      "end_date": "2024"
-    },
-    {
-      "institution": "Ibno Zohr Ait Melloul",
-      "degree": "Diplôme d'études universitaires (DEUG) filière Droit",
-      "start_date": "2021",
-      "end_date": "2022"
-    },
-    {
-      "institution": "Lycée Al Majd Azrou Ait Melloul",
-      "degree": "Baccalauréat Lettre en Sciences Humains",
-      "start_date": "2019",
-      "end_date": "2020"
+      "institution": "University of Tennessee",
+      "degree": "B.S. Computer Science",
+      "start_date": "September 2015",
+      "end_date": "June 2019"
     }
   ],
   "experience": [
     {
-      "company": "JAOUDA / COPAG",
-      "role": "Vendeur",
-      "start_date": "07/2024",
-      "end_date": "08/2025",
-      "summary": "Vente en contact direct avec les clients; saisie des commandes et remplissage des bons."
+      "company": "Deloitte",
+      "role": "Full-Stack Developer",
+      "start_date": "August 2020",
+      "end_date": "Present",
+      "summary": "Designed, developed, and modified 25+ software systems and custom components; developed 30+ new software solutions by analyzing system performance standards; analyzed systems flow, data usage, and work processes and investigated problem areas; integrated existing software into 13 upgraded/modified systems for higher performance; developed and executed 200+ test procedures; analyzed 30+ user requirements to derive technical design and performance requirements; planned, tracked, and managed deliverables across 200+ short-term sprints and 50+ long-term deployments."
     },
     {
-      "company": "Silda",
-      "role": "Collecte et Contrôle de Qualité du Lait",
-      "start_date": null,
-      "end_date": null,
-      "summary": "Collecte et contrôle de la qualité du lait au sein de l’unité de production."
-    },
-    {
-      "company": "Société des eaux Sidi Ali (Agadir)",
-      "role": null,
-      "start_date": null,
-      "end_date": null,
-      "summary": "Expérience professionnelle au sein de la société des eaux Sidi Ali à Agadir."
-    },
-    {
-      "company": "Supermarché (Casablanca)",
-      "role": null,
-      "start_date": null,
-      "end_date": null,
-      "summary": "Expérience en vente/commerce dans un supermarché à Casablanca."
-    },
-    {
-      "company": "E-commerce (à domicile)",
-      "role": null,
-      "start_date": null,
-      "end_date": null,
-      "summary": "Expérience en e-commerce à domicile."
+      "company": "Randstad Technologies",
+      "role": "Jr. Full-Stack Developer",
+      "start_date": "June 2019",
+      "end_date": "August 2020",
+      "summary": "Developed code following security practices and design patterns; wrote 200+ unit tests for UI, back-end processing, connectivity, and database interactions; maintained 8+ systems as Tier 2 support (break-fix and data changes); documented technical specifications and dependencies; participated in 10+ business continuity/disaster recovery exercises; implemented 25+ system and application designs."
     }
   ]
 }

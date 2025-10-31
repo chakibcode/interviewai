@@ -211,16 +211,16 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-green-400 text-primary mb-1">Resume Editor</h1>
+        <h1 className="text-2xl font-bold text-green-200 mb-1">Resume Editor</h1>
         <p className="text-sm text-muted-foreground">Update your professional information</p>
       </div>
 
       {/* Personal Information */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-indigo-700 border-b  border-indigo-200 pb-2">Personal Information</h2>
+        <h2 className="text-lg font-semibold text-white border-b  border-indigo-200 pb-2">Personal Information</h2>
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-green-200 mb-1">Full Name</label>
             <input
 
               type="text"
@@ -233,7 +233,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-green-200 mb-1">Email</label>
               <input
                 type="email"
                 className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
@@ -243,7 +243,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-green-200 mb-1">Phone</label>
               <input
                 type="tel"
                 className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
@@ -254,7 +254,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
+            <label className="block text-sm font-medium text-green-200 mb-1">Location</label>
             <input
               type="text"
               className="w-full rounded-md border-2 border-green-500 px-3 py-2 text-sm bg-background focus:outline-none focus:border-green-500"
@@ -268,7 +268,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
 
       {/* Skills */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-indigo-700 border-b border-indigo-200 pb-2">Skills</h2>
+        <h2 className="text-lg font-semibold text-green-200 border-b border-indigo-200 pb-2">Skills</h2>
         <div className="flex flex-wrap gap-2">
           {skills.map((s, i) => (
             <span key={i} className="inline-flex items-center gap-2 bg-indigo-600 text-white px-3 py-1 rounded-full text-xs">
@@ -291,7 +291,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
 
       {/* Links */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-indigo-700 border-b border-indigo-200 pb-2">Links</h2>
+        <h2 className="text-lg font-semibold text-green-200 border-b border-indigo-200 pb-2">Links</h2>
         <div className="flex flex-wrap gap-2">
           {links.map((l, i) => (
             <span key={i} className="inline-flex items-center gap-2 bg-indigo-600 text-white px-3 py-1 rounded-full text-xs">
@@ -314,26 +314,26 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
 
       {/* Experience */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-indigo-700 border-b border-indigo-200 pb-2">Work Experience</h2>
+        <h2 className="text-lg font-semibold text-green-200 border-b border-indigo-200 pb-2">Work Experience</h2>
         {experiences.map((exp, i) => {
           const isEditing = editingExpIndex === i;
           return (
-            <div key={i} className="bg-slate-50 border border-slate-200 rounded-md p-4 space-y-2">
+            <div key={i} className="bg-background/30 border border-green-500/30 rounded-lg p-4 space-y-3 shadow-sm transition-colors hover:border-green-400/50">
               {!isEditing ? (
                 <>
                   <div className="flex items-center justify-between">
-                    <div className="font-medium text-slate-800 text-sm">
+                    <div className="text-sm font-semibold text-green-200">
                       {exp.company} — {exp.role}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-muted-foreground">
                       {exp.startDate} – {exp.endDate}
                     </div>
                   </div>
                   {exp.summary && (
-                    <p className="text-sm text-slate-700">{exp.summary}</p>
+                    <p className="text-sm text-green-200 leading-relaxed">{exp.summary}</p>
                   )}
-                  <div className="flex gap-2">
-                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => startEditExp(i)}>Edit</button>
+                  <div className="flex gap-2 mt-1">
+                    <button className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => startEditExp(i)}>Edit</button>
                     <button className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => removeExperience(i)}>Remove</button>
                   </div>
                 </>
@@ -427,23 +427,23 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
 
       {/* Education */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-indigo-700 border-b border-indigo-200 pb-2">Education</h2>
+        <h2 className="text-lg font-semibold text-green-200 border-b border-indigo-200 pb-2">Education</h2>
         {education.map((edu, i) => {
           const isEditing = editingEduIndex === i;
           return (
-            <div key={i} className="bg-slate-50 border border-slate-200 rounded-md p-4 space-y-2">
+            <div key={i} className="bg-background/30 border border-green-500/30 rounded-lg p-4 space-y-3 shadow-sm transition-colors hover:border-green-400/50">
               {!isEditing ? (
                 <>
                   <div className="flex items-center justify-between">
-                    <div className="font-medium text-slate-800 text-sm">
+                    <div className="text-sm font-semibold text-green-200">
                       {edu.institution} — {edu.degree}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-muted-foreground">
                       {edu.startDate} – {edu.endDate}
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => startEditEdu(i)}>Edit</button>
+                  <div className="flex gap-2 mt-1">
+                    <button className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => startEditEdu(i)}>Edit</button>
                     <button className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md text-xs" onClick={() => removeEducation(i)}>Remove</button>
                   </div>
                 </>
@@ -480,7 +480,7 @@ const Step2: React.FC<Step2Props> = ({ fullName, setFullName, parsedData, userId
                     />
                   </div>
                   <div className="flex gap-2">
-                    <button className="bgGreen-600 hover:bg-green-500 text-white px-3 py-1 rounded-md text-xs" onClick={saveEditEdu}>Save</button>
+                    <button className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded-md text-xs" onClick={saveEditEdu}>Save</button>
                     <button className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded-md text-xs" onClick={cancelEditEdu}>Cancel</button>
                   </div>
                 </>
